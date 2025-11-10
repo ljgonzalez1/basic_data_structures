@@ -8,7 +8,6 @@
 *.ipr
 .idea_modules/
 out/
-.idea/
 
 # CMake
 CMakeLists.txt.user
@@ -91,7 +90,6 @@ dkms.conf
 .goutputstream-*
 
 # KDE
-.directory
 .kde/
 .kde4/
 kdeglobals
@@ -104,7 +102,6 @@ kdeglobals
 # Nano
 *.save
 *.swp
-*~
 
 # Micro
 *.micro.bak
