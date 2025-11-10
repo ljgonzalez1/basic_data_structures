@@ -1,1 +1,1 @@
-#include "../../include/bds_array.h"
+#include "../../include/bds/array/bds_array.h"

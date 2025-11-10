@@ -103,3 +103,8 @@ kdeglobals
 
 # Micro
 *.micro.bak
+
+/build
+/bin
+/obj
+/lib
