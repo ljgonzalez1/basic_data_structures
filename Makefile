@@ -2,7 +2,7 @@
 
 CC      := cc
 AR      := ar
-CFLAGS := -std=c11 -Wall -Wextra -O0 -g3 -fno-omit-frame-pointer -Iinclude
+CFLAGS := -std=c11 -Wall -Wextra -O0 -g3 -fno-omit-frame-pointer -DDEBUG -Iinclude
 ARFLAGS := rcs
 
 LIBNAME := bds
