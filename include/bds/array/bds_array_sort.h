@@ -1,5 +1,9 @@
 #pragma once
 
+#include <stddef.h>
+#include "bds_array.h"
+
+
 /// Search and count
 size_t arrayIndexOf(const Array *array, filter_func key);
 size_t arrayCount(const Array *array, filter_func key);
