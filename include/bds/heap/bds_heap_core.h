@@ -59,11 +59,11 @@ static inline void heapSwap(Heap *heap, const size_t idx1, const size_t idx2) {
 /// Lifecycle
 
 static inline MinHeap *minHeapShallowCopyConst(const MinHeap *min_heap) {
-    return (MinHeap *)heapShallowCopy((Heap *)min_heap);
+    return (MinHeap *)heapShallowCopy((const Heap *)min_heap);
 }
 
 static inline MaxHeap *maxHeapShallowCopyConst(const MaxHeap *max_heap) {
-    return (MaxHeap *)heapShallowCopy((Heap *)max_heap);
+    return (MaxHeap *)heapShallowCopy((const Heap *)max_heap);
 }
 
 static inline void minHeapFreeWith(MinHeap *min_heap, const deleter_func deleter) {
@@ -108,7 +108,7 @@ static inline void *maxHeapGet(const MaxHeap *heap, const size_t index) {
     return heapGet((Heap *)heap, index);
 }
 
-static inline void *minHeapGeMin(const MinHeap *min_heap) {
+static inline void *minHeapGetMin(const MinHeap *min_heap) {
     if (minHeapIsEmpty(min_heap)) return NULL;
     return minHeapGet(min_heap, 0);
 }
