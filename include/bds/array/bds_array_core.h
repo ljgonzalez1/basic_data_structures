@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../bds_config.h"
+
 #include <stddef.h>   // size_t
 #include <stdbool.h>  // bool
 
