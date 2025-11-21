@@ -24,7 +24,7 @@ void arrayCocktailShakerSort(Array *array, const key_val_func key) {
             const int next_val = key(arrayGet(array, next_idx));
 
             if (this_val > next_val) {
-                swap(array, this_idx, next_idx);
+                arraySwap(array, this_idx, next_idx);
                 swapped = true;
             }
         }
@@ -44,7 +44,7 @@ void arrayCocktailShakerSort(Array *array, const key_val_func key) {
             const int prev_val = key(arrayGet(array, prev_idx));
 
             if (prev_val > this_val) {
-                swap(array, prev_idx, this_idx);
+                arraySwap(array, prev_idx, this_idx);
                 swapped = true;
             }
         }

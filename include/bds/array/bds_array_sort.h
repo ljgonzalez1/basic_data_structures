@@ -19,7 +19,6 @@ void arrayShellSort(Array *array, key_val_func key);
 // AVG: O(n log n) ; WORST O(n²)
 void arrayQuickSort(Array *array, key_val_func key);
 
-
 /// Sorting (returns NEW sorted array)
 // AVG: O(n²)
 Array *arrayBubbleSorted (const Array *array, key_val_func key);
@@ -36,3 +35,6 @@ Array *arrayIntroSorted(const Array *array, key_val_func key);
 Array *arrayShellSorted(const Array *array, key_val_func key);
 // AVG: O(n log n) ; WORST O(n²)
 Array *arrayQuickSorted(const Array *array, key_val_func key);
+
+
+

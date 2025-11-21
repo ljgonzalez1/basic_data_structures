@@ -25,7 +25,7 @@ void arraySelectionSort(Array *array, const key_val_func key) {
 
         // swap minimum to its correct position
         if (min_idx != idx) {
-            swap(array, idx, min_idx);
+            arraySwap(array, idx, min_idx);
         }
     }
 }

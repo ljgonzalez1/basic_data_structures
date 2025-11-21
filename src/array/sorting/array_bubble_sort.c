@@ -17,7 +17,7 @@ void arrayBubbleSort(Array *array, const key_val_func key) {
             const int next_val = key(arrayGet(array, next_idx));
 
             if (this_val > next_val) {
-                swap(array, idx, next_idx);
+                arraySwap(array, idx, next_idx);
                 swapped = true;
             }
         }

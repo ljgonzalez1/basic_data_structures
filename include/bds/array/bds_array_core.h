@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../bds_types.h"
+
 #include <stddef.h>   // size_t
 #include <stdbool.h>  // bool
 
@@ -7,11 +9,6 @@ typedef struct bds_array {
     void **data;
     size_t length;
 } Array;
-
-// Key functions
-typedef int (*key_val_func)(const void *elem);
-typedef void (*deleter_func)(void *elem);
-typedef bool (*filter_func)(const void *elem);  // for counters
 
 /// Lifecycle
 Array *arrayNew(size_t length);
@@ -49,7 +46,7 @@ static inline void arraySet(Array *array, const size_t index, void *data) {
     array->data[index] = data;
 }
 
-static inline void swap(Array *array, const size_t idx1, const size_t idx2) {
+static inline void arraySwap(Array *array, const size_t idx1, const size_t idx2) {
     if (idx1 == idx2) return;
 
     void *temp = arrayGet(array, idx1);

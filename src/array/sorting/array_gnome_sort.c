@@ -27,7 +27,7 @@ void arrayGnomeSort(Array *array, const key_val_func key) {
             // ...and step back (if possible)...
             // ...if not possible, we are at the start, just step forward.
         } else {
-            swap(array, curr_idx, next_idx);
+            arraySwap(array, curr_idx, next_idx);
 
             if (start > 0) {
                 start--;
