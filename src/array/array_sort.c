@@ -195,7 +195,6 @@ Array *arrayInsertionSorted(const Array *array, const key_val_func key) {
     return sorted_array;
 }
 
-
 Array *arraySelectionSorted(const Array *array, const key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
@@ -205,7 +204,6 @@ Array *arraySelectionSorted(const Array *array, const key_val_func key) {
     return sorted_array;
 }
 
-
 Array *arrayCocktailShakerSorted(const Array *array, const key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
@@ -214,7 +212,6 @@ Array *arrayCocktailShakerSorted(const Array *array, const key_val_func key) {
 
     return sorted_array;
 }
-
 
 Array *arrayGnomeSorted(const Array *array, const key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
