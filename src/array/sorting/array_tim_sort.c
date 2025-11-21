@@ -10,7 +10,7 @@ void arrayTimSort(Array *array, const key_val_func key) {
     // TODO: ===================
 }
 
-Array *arrayTimSorted  (const Array *array, key_val_func key) {
+Array *arrayTimSorted(const Array *array, key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 

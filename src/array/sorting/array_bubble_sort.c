@@ -26,7 +26,7 @@ void arrayBubbleSort(Array *array, const key_val_func key) {
     } while (swapped);
 }
 
-Array *arrayBubbleSorted (const Array *array, const key_val_func key) {
+Array *arrayBubbleSorted(const Array *array, const key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 
