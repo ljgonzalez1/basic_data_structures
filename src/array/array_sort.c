@@ -2,7 +2,7 @@
 #include "../../include/bds/array/bds_array_sort.h"
 
 
-static inline void swap(Array *array, size_t idx1, size_t idx2) {
+static inline void swap(Array *array, const size_t idx1, const size_t idx2) {
     if (idx1 == idx2) return;
 
     void *temp = arrayGet(array, idx1);
@@ -10,7 +10,7 @@ static inline void swap(Array *array, size_t idx1, size_t idx2) {
     arraySet(array, idx2, temp);
 }
 
-void arrayBubbleSort(Array *array, key_val_func key) {
+void arrayBubbleSort(Array *array, const key_val_func key) {
     size_t length = arrayLength(array);
     if (length < 2) return;
 
@@ -20,10 +20,10 @@ void arrayBubbleSort(Array *array, key_val_func key) {
         swapped = false;
 
         for (size_t idx = 0; idx < length - 1; idx++) {
-            size_t next_idx = idx + 1;
+            const size_t next_idx = idx + 1;
 
-            int this_val = key(arrayGet(array, idx));
-            int next_val = key(arrayGet(array, next_idx));
+            const int this_val = key(arrayGet(array, idx));
+            const int next_val = key(arrayGet(array, next_idx));
 
             if (this_val > next_val) {
                 swap(array, idx, next_idx);
@@ -35,14 +35,14 @@ void arrayBubbleSort(Array *array, key_val_func key) {
     } while (swapped);
 }
 
-void arrayInsertionSort(Array *array, key_val_func key) {
+void arrayInsertionSort(Array *array, const key_val_func key) {
     // Subarray sorted at the left
-    size_t length = arrayLength(array);
+    const size_t length = arrayLength(array);
     if (length < 2) return;
 
     for (size_t idx = 1; idx < length; idx++) {
         void *to_insert_elem = arrayGet(array, idx);
-        int key_to_insert = key(to_insert_elem);
+        const int key_to_insert = key(to_insert_elem);
 
         size_t shifted_idx = idx;
 
@@ -59,9 +59,9 @@ void arrayInsertionSort(Array *array, key_val_func key) {
     }
 }
 
-void arraySelectionSort(Array *array, key_val_func key) {
+void arraySelectionSort(Array *array, const key_val_func key) {
     // Swaps minimum to its correct position.
-    size_t length = arrayLength(array);
+    const size_t length = arrayLength(array);
     if (length < 2) return;
 
     // Last one is not considered
@@ -72,7 +72,7 @@ void arraySelectionSort(Array *array, key_val_func key) {
 
         // find minimum in the rest of the array;
         for (size_t idx_right = idx + 1; idx_right < length; idx_right++) {
-            int idx_right_val = key(arrayGet(array, idx_right));
+            const int idx_right_val = key(arrayGet(array, idx_right));
 
             if (idx_right_val < min_val) {
                 min_val = idx_right_val;
@@ -84,11 +84,10 @@ void arraySelectionSort(Array *array, key_val_func key) {
         if (min_idx != idx) {
             swap(array, idx, min_idx);
         }
-
     }
 }
 
-Array *arrayBubbleSorted (const Array *array, key_val_func key) {
+Array *arrayBubbleSorted (const Array *array, const key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 
@@ -97,7 +96,7 @@ Array *arrayBubbleSorted (const Array *array, key_val_func key) {
     return sorted_array;
 }
 
-Array *arrayInsertionSorted(const Array *array, key_val_func key) {
+Array *arrayInsertionSorted(const Array *array, const key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 
@@ -107,7 +106,7 @@ Array *arrayInsertionSorted(const Array *array, key_val_func key) {
 }
 
 
-Array *arraySelectionSorted(const Array *array, key_val_func key) {
+Array *arraySelectionSorted(const Array *array, const key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 
@@ -117,7 +116,7 @@ Array *arraySelectionSorted(const Array *array, key_val_func key) {
 }
 
 
-Array *arrayCocktailShakerSorted(const Array *array, key_val_func key) {
+Array *arrayCocktailShakerSorted(const Array *array, const key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 
