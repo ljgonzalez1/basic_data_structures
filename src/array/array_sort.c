@@ -7,14 +7,10 @@ static inline void swap(Array *array, size_t idx1, size_t idx2) {
     arraySet(array, idx2, temp);
 }
 
-/// Sorting (return NEW sorted array)
-Array *arrayBubbleSorted (const Array *array, key_val_func key) {
-    Array *sorted_array = arrayShallowCopy(array);
-    if (!sorted_array) return NULL;
+void arrayBubbleSort(Array *array, key_val_func key) {
+    size_t length = arrayLength(array);
 
-    size_t length = arrayLength(sorted_array);
-
-    if (length < 2) return sorted_array;
+    if (length < 2) return;
 
     bool swapped;
 
@@ -24,29 +20,36 @@ Array *arrayBubbleSorted (const Array *array, key_val_func key) {
         for (size_t idx = 0; idx < length - 1; idx++) {
             size_t next_idx = idx + 1;
 
-            int this_val = key(arrayGet(sorted_array, idx));
-            int next_val = key(arrayGet(sorted_array, next_idx));
+            int this_val = key(arrayGet(array, idx));
+            int next_val = key(arrayGet(array, next_idx));
 
             if (this_val > next_val) {
-                swap(sorted_array, idx, next_idx);
+                swap(array, idx, next_idx);
                 swapped = true;
             }
         }
 
         length--;  // Last element is in place, no need to check again.
     } while (swapped);
+}
+
+Array *arrayBubbleSorted (const Array *array, key_val_func key) {
+    Array *sorted_array = arrayShallowCopy(array);
+    if (!sorted_array) return NULL;
+
+    arrayBubbleSort(sorted_array, key);
 
     return sorted_array;
 }
 
 
 Array *arrayInsertionSorted(const Array *array, key_val_func key) {
+    // Moves a value to its correct position in the sorted (left) part of the array for every elemento of the array.
+
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 
-    // TODO: ===================
-    // TODO: SORT ALGORITHM HERE
-    // TODO: ===================
+
 
     return sorted_array;
 }
