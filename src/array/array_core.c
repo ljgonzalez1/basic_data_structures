@@ -4,14 +4,14 @@
 
 /// Lifecycle
 Array *arrayNew(const size_t length) {
-	Array *arr = (Array *)bds_malloc(sizeof(Array));
+	Array *arr = (Array *)malloc(sizeof(Array));
 	if (!arr) return NULL;
 
 	arr->length = length;
-	arr->data = (void **)bds_calloc(length, sizeof(void*));
+	arr->data = (void **)calloc(length, sizeof(void*));
 
 	if (!arr->data && length > 0) {
-		bds_free(arr);
+		free(arr);
 		return NULL;
 	}
 
@@ -41,7 +41,7 @@ void arrayFreeWith(Array *array, const deleter_func deleter) {
 
 // Just frees itself
 void arrayFree(Array *array) {
-	bds_free(array->data);
-	bds_free(array);
+	free(array->data);
+	free(array);
 }
 
