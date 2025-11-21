@@ -2,12 +2,12 @@
 #include <stdlib.h>
 
 /// Lifecycle
-Array *arrayNew(const size_t length) {
-	Array *arr = (Array*)malloc(sizeof(Array));
+Array *arrayNew(size_t length) {
+	Array *arr = (Array *)malloc(sizeof(Array));
 	if (!arr) return NULL;
 
 	arr->length = length;
-	arr->data = (void**)calloc(length, sizeof(void*));
+	arr->data = (void **)calloc(length, sizeof(void*));
 
 	if (!arr->data && length > 0) {
 		free(arr);
@@ -46,15 +46,15 @@ void arrayFree(Array *array) {
 
 /// Info
 size_t arrayLength(const Array *array) {
-	return array->length;
+	return array ? array->length : 0;
 }
 
 bool arrayIsEmpty(const Array *array) {
-	return !array || array->length == 0;
+	return array->length == 0;
 }
 
 /// Access (read-only to `void **payload[i]`)
-void *arrayGet(const Array *array, const size_t index) {
+void *arrayGet(const Array *array, size_t index) {
 	if (index >= array->length) return NULL;
 
 	return array->data[index];
@@ -72,7 +72,7 @@ void *arrayLast(const Array *array) {
 
 /// Change
 // sets payload[index] = data
-bool arraySet(Array *array, const size_t index, void *data) {
+bool arraySet(Array *array, size_t index, void *data) {
 	if (index >= array->length) return false;
 
 	array->data[index] = data;

@@ -26,7 +26,7 @@ bool arrayIsEmpty(const Array *array);
 /// Access (read-only to `void **data[i]`)
 void *arrayGet(const Array *array, size_t index);
 void *arrayFirst(const Array *array);
-void *arrayCLast(const Array *array);
+void *arrayLast(const Array *array);
 
 /// Change
 // sets array[index] = data
