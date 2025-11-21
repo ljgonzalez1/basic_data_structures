@@ -65,7 +65,7 @@ void arraySelectionSort(Array *array, const key_val_func key) {
     if (length < 2) return;
 
     // Last one is not considered
-    for (size_t idx = 0; idx < arrayLength(array) - 1; idx++) {
+    for (size_t idx = 0; idx < length - 1; idx++) {
         // We assume the minimum is at idx
         size_t min_idx = idx;
         int min_val = key(arrayGet(array, idx));
@@ -151,8 +151,8 @@ void arrayGnomeSort(Array *array, const key_val_func key) {
     size_t start = 0;
 
     while (start < length - 1) {
-        const int curr_idx = (int)start;
-        const int next_idx = (int)start + 1;
+        const size_t curr_idx = start;
+        const size_t next_idx = start + 1;
 
         const int curr_val = key(arrayGet(array, curr_idx));
         const int next_val = key(arrayGet(array, next_idx));
@@ -200,7 +200,7 @@ Array *arraySelectionSorted(const Array *array, const key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 
-    arrayInsertionSort(sorted_array, key);
+    arraySelectionSort(sorted_array, key);
 
     return sorted_array;
 }
