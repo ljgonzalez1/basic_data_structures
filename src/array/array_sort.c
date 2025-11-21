@@ -3,6 +3,8 @@
 
 
 static inline void swap(Array *array, size_t idx1, size_t idx2) {
+    if (idx1 == idx2) return;
+
     void *temp = arrayGet(array, idx1);
     arraySet(array, idx1, arrayGet(array, idx2));
     arraySet(array, idx2, temp);
@@ -34,7 +36,7 @@ void arrayBubbleSort(Array *array, key_val_func key) {
 }
 
 void arrayInsertionSort(Array *array, key_val_func key) {
-    // Subarray sorted at the right
+    // Subarray sorted at the left
     size_t length = arrayLength(array);
     if (length < 2) return;
 
@@ -58,7 +60,32 @@ void arrayInsertionSort(Array *array, key_val_func key) {
 }
 
 void arraySelectionSort(Array *array, key_val_func key) {
-    
+    // Swaps minimum to its correct position.
+    size_t length = arrayLength(array);
+    if (length < 2) return;
+
+    // Last one is not considered
+    for (size_t idx = 0; idx < arrayLength(array) - 1; idx++) {
+        // We assume the minimum is at idx
+        size_t min_idx = idx;
+        int min_val = key(arrayGet(array, idx));
+
+        // find minimum in the rest of the array;
+        for (size_t idx_right = idx + 1; idx_right < length; idx_right++) {
+            int idx_right_val = key(arrayGet(array, idx_right));
+
+            if (idx_right_val < min_val) {
+                min_val = idx_right_val;
+                min_idx = idx_right;
+            }
+        }
+
+        // swap minimum to its correct position
+        if (min_idx != idx) {
+            swap(array, idx, min_idx);
+        }
+
+    }
 }
 
 Array *arrayBubbleSorted (const Array *array, key_val_func key) {
