@@ -57,8 +57,6 @@ void arrayInsertionSort(Array *array, key_val_func key) {
 }
 
 
-
-
 Array *arrayBubbleSorted (const Array *array, key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
