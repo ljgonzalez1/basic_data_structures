@@ -3,16 +3,7 @@
 
 #include <stdlib.h>
 
-Array *arrayHeapSorted(const Array *array, key_val_func key) {
-    Array *sorted_array = arrayShallowCopy(array);
-    if (!sorted_array) return NULL;
 
-    // TODO: ===================
-    // TODO: SORTING ALGORITHM HERE
-    // TODO: ===================
-
-    return sorted_array;
-}
 
 
 Array *arrayTimSorted(const Array *array, key_val_func key) {
@@ -27,16 +18,7 @@ Array *arrayTimSorted(const Array *array, key_val_func key) {
 }
 
 
-Array *arrayIntroSorted(const Array *array, key_val_func key) {
-    Array *sorted_array = arrayShallowCopy(array);
-    if (!sorted_array) return NULL;
 
-    // TODO: ===================
-    // TODO: SORTING ALGORITHM HERE
-    // TODO: ===================
-
-    return sorted_array;
-}
 
 
 // AVG: O(n log² n)
