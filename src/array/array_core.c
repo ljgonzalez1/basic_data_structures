@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 /// Lifecycle
-Array *arrayNew(size_t length) {
+Array *arrayNew(const size_t length) {
 	Array *arr = (Array *)malloc(sizeof(Array));
 	if (!arr) return NULL;
 
@@ -18,10 +18,10 @@ Array *arrayNew(size_t length) {
 }
 
 Array *arrayShallowCopy(const Array *array) {
-	Array *new_arr = arrayNew(array->length);
+	Array *new_arr = arrayNew(arrayLength(array));
 	if (!new_arr) return NULL;
 
-	for (size_t i = 0; i < array->length; i++) {
+	for (size_t i = 0; i < arrayLength(array); i++) {
 		void *datapoint = arrayGet(array, i);
 		arraySet(new_arr, i, datapoint);
 	}
@@ -30,7 +30,7 @@ Array *arrayShallowCopy(const Array *array) {
 }
 
 void arrayFreeWith(Array *array, const deleter_func deleter) {
-	for (size_t i = 0; i < array->length; i++) {
+	for (size_t i = 0; i < arrayLength(array); i++) {
 		void *datapoint = arrayGet(array, i);
 		deleter(datapoint);
 	}
@@ -42,40 +42,5 @@ void arrayFreeWith(Array *array, const deleter_func deleter) {
 void arrayFree(Array *array) {
 	free(array->data);
 	free(array);
-}
-
-/// Info
-size_t arrayLength(const Array *array) {
-	return array ? array->length : 0;
-}
-
-bool arrayIsEmpty(const Array *array) {
-	return array->length == 0;
-}
-
-/// Access (read-only to `void **payload[i]`)
-void *arrayGet(const Array *array, size_t index) {
-	if (index >= array->length) return NULL;
-
-	return array->data[index];
-}
-
-void *arrayFirst(const Array *array) {
-	if (array->length == 0) return NULL;
-	return array->data[0];
-}
-
-void *arrayLast(const Array *array) {
-	if (array->length == 0) return NULL;
-	return array->data[array->length - 1];
-}
-
-/// Change
-// sets payload[index] = data
-bool arraySet(Array *array, size_t index, void *data) {
-	if (index >= array->length) return false;
-
-	array->data[index] = data;
-	return true;
 }
 

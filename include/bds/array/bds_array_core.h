@@ -20,15 +20,32 @@ void arrayFreeWith(Array *array, deleter_func deleter);  // Frees payloads accor
 void arrayFree(Array *array);  // Just frees itself
 
 /// Info
-size_t arrayLength(const Array *array);
-bool arrayIsEmpty(const Array *array);
+static inline size_t arrayLength(const Array *array) {
+    return array->length;
+}
+
+static inline bool arrayIsEmpty(const Array *array) {
+    return array->length == 0;
+}
 
 /// Access (read-only to `void **data[i]`)
-void *arrayGet(const Array *array, size_t index);
-void *arrayFirst(const Array *array);
-void *arrayLast(const Array *array);
+static inline void *arrayGet(const Array *array, const size_t index) {
+    return array->data[index];
+}
+
+static inline void *arrayFirst(const Array *array) {
+    if (arrayIsEmpty(array)) return NULL;
+    return array->data[0];
+}
+
+static inline void *arrayLast(const Array *array) {
+    if (arrayIsEmpty(array)) return NULL;
+    return array->data[array->length - 1];
+}
 
 /// Change
 // sets array[index] = data
-bool arraySet(Array *array, size_t index, void *data);
+static inline void arraySet(Array *array, const size_t index, void *data) {
+    array->data[index] = data;
+}
 
