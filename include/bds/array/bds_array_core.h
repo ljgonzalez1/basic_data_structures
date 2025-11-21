@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../bds_config.h"
 #include "../utils/bds_memory_allocation.h"
 
 #include <stddef.h>   // size_t

@@ -257,11 +257,11 @@ void arrayMergeSort(Array *array, const key_val_func key) {
     const size_t length = arrayLength(array);
     if (length < 2) return;
 
-    void **temp = (void **)malloc(length * sizeof(void *));
+    void **temp = (void **)bds_malloc(length * sizeof(void *));
     if (!temp) return;  // Memory allocation failed
 
     mergeSortRecursive(array, temp, 0, length, key);
-    free(temp);
+    bds_free(temp);
 }
 
 Array *arrayBubbleSorted (const Array *array, const key_val_func key) {
