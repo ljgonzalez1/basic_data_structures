@@ -56,6 +56,9 @@ void arrayInsertionSort(Array *array, key_val_func key) {
     }
 }
 
+void arraySelectionSort(Array *array, key_val_func key) {
+    
+}
 
 Array *arrayBubbleSorted (const Array *array, key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
@@ -65,7 +68,6 @@ Array *arrayBubbleSorted (const Array *array, key_val_func key) {
 
     return sorted_array;
 }
-
 
 Array *arrayInsertionSorted(const Array *array, key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
@@ -81,9 +83,7 @@ Array *arraySelectionSorted(const Array *array, key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 
-    // TODO: ===================
-    // TODO: SORT ALGORITHM HERE
-    // TODO: ===================
+    arrayInsertionSort(sorted_array, key);
 
     return sorted_array;
 }
@@ -94,7 +94,7 @@ Array *arrayCocktailShakerSorted(const Array *array, key_val_func key) {
     if (!sorted_array) return NULL;
 
     // TODO: ===================
-    // TODO: SORT ALGORITHM HERE
+    // TODO: SORTING ALGORITHM HERE
     // TODO: ===================
 
     return sorted_array;
@@ -106,7 +106,7 @@ Array *arrayGnomeSorted(const Array *array, key_val_func key) {
     if (!sorted_array) return NULL;
 
     // TODO: ===================
-    // TODO: SORT ALGORITHM HERE
+    // TODO: SORTING ALGORITHM HERE
     // TODO: ===================
 
     return sorted_array;
@@ -117,7 +117,7 @@ Array *arrayMergeSorted  (const Array *array, key_val_func key) {
     if (!sorted_array) return NULL;
 
     // TODO: ===================
-    // TODO: SORT ALGORITHM HERE
+    // TODO: SORTING ALGORITHM HERE
     // TODO: ===================
 
     return sorted_array;
@@ -129,7 +129,7 @@ Array *arrayHeapSorted(const Array *array, key_val_func key) {
     if (!sorted_array) return NULL;
 
     // TODO: ===================
-    // TODO: SORT ALGORITHM HERE
+    // TODO: SORTING ALGORITHM HERE
     // TODO: ===================
 
     return sorted_array;
@@ -141,7 +141,7 @@ Array *arrayTimSorted(const Array *array, key_val_func key) {
     if (!sorted_array) return NULL;
 
     // TODO: ===================
-    // TODO: SORT ALGORITHM HERE
+    // TODO: SORTING ALGORITHM HERE
     // TODO: ===================
 
     return sorted_array;
@@ -153,7 +153,7 @@ Array *arrayIntroSorted(const Array *array, key_val_func key) {
     if (!sorted_array) return NULL;
 
     // TODO: ===================
-    // TODO: SORT ALGORITHM HERE
+    // TODO: SORTING ALGORITHM HERE
     // TODO: ===================
 
     return sorted_array;
@@ -166,7 +166,7 @@ Array *arrayShellSorted(const Array *array, key_val_func key) {
     if (!sorted_array) return NULL;
 
     // TODO: ===================
-    // TODO: SORT ALGORITHM HERE
+    // TODO: SORTING ALGORITHM HERE
     // TODO: ===================
 
     return sorted_array;
@@ -179,7 +179,7 @@ Array *arrayQuickSorted  (const Array *array, key_val_func key) {
     if (!sorted_array) return NULL;
 
     // TODO: ===================
-    // TODO: SORT ALGORITHM HERE
+    // TODO: SORTING ALGORITHM HERE
     // TODO: ===================
 
     return sorted_array;
