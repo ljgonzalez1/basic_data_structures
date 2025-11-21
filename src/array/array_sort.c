@@ -1,6 +1,7 @@
 #include "../../include/bds/array/bds_array_core.h"
 #include "../../include/bds/array/bds_array_sort.h"
 
+
 static inline void swap(Array *array, size_t idx1, size_t idx2) {
     void *temp = arrayGet(array, idx1);
     arraySet(array, idx1, arrayGet(array, idx2));
@@ -9,7 +10,6 @@ static inline void swap(Array *array, size_t idx1, size_t idx2) {
 
 void arrayBubbleSort(Array *array, key_val_func key) {
     size_t length = arrayLength(array);
-
     if (length < 2) return;
 
     bool swapped;
@@ -33,6 +33,32 @@ void arrayBubbleSort(Array *array, key_val_func key) {
     } while (swapped);
 }
 
+void arrayInsertionSort(Array *array, key_val_func key) {
+    size_t length = arrayLength(array);
+    if (length < 2) return;
+
+    for (size_t idx = 1; idx < length; idx++) {
+        void *to_insert_elem = arrayGet(array, idx);
+        int key_to_insert = key(to_insert_elem);
+
+        size_t shifted_idx = idx;
+
+        while (
+            shifted_idx > 0 &&
+            key(arrayGet(array, shifted_idx - 1)) > key_to_insert) {
+
+            void *displaced_elem = arrayGet(array, shifted_idx - 1);
+            arraySet(array, shifted_idx, displaced_elem);
+            shifted_idx--;
+        }
+
+        arraySet(array, shifted_idx, to_insert_elem);
+    }
+}
+
+
+
+
 Array *arrayBubbleSorted (const Array *array, key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
@@ -44,12 +70,10 @@ Array *arrayBubbleSorted (const Array *array, key_val_func key) {
 
 
 Array *arrayInsertionSorted(const Array *array, key_val_func key) {
-    // Moves a value to its correct position in the sorted (left) part of the array for every elemento of the array.
-
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 
-
+    arrayInsertionSort(sorted_array, key);
 
     return sorted_array;
 }
