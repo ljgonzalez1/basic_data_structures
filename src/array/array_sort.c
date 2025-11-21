@@ -34,6 +34,7 @@ void arrayBubbleSort(Array *array, key_val_func key) {
 }
 
 void arrayInsertionSort(Array *array, key_val_func key) {
+    // Subarray sorted at the right
     size_t length = arrayLength(array);
     if (length < 2) return;
 
