@@ -1,38 +1,40 @@
 #include "../../include/bds/array/bds_array_core.h"
+#include <stdlib.h>
 
 /// Lifecycle
 Array *arrayNew(size_t length) {
-	Array arr = (Array*)malloc(sizeof(Array));
-	return arr
+	Array *arr = (Array*)malloc(sizeof(Array));
+	return arr;
 }
 
 Array *arrayShallowCopy(const Array *array) {
-	new_arr = arrayNew(array->length);
+	Array *new_arr = arrayNew(array->length);
 
 	for (size_t i = 0; i < array->length; i++) {
-		void *datapoint = arrayGet(array, i);
-		arraySet(new_arr, i, datapoint);
+		const void *datapoint = arrayGet(array, i);
+		arraySet(new_arr, i, (void *)datapoint);
 	}
 
 	return new_arr;
 }
 
-void arrayFreeWith(Array *array, deleter_func deleter) {
+void arrayFreeWith(Array *array, const deleter_func deleter) {
 	for (size_t i = 0; i < array->length; i++) {
-		void *datapoint = arrayGet(array, i);
-		deleter_func(datapoint);
+		void *datapoint = (void *)arrayGet(array, i);
+		deleter(datapoint);
 	}
 
 	arrayFree(array);
 }
 
+// Just frees itself
 void arrayFree(Array *array) {
-	free(new_arr);
+	free(array);
 }
 
 /// Info
 size_t arrayLength(const Array *array) {
-	return array->length
+	return array->length;
 }
 
 bool arrayIsEmpty(const Array *array) {
@@ -40,28 +42,16 @@ bool arrayIsEmpty(const Array *array) {
 }
 
 /// Access (read-only to `void **payload[i]`)
-void *arrayGet(Array *array, size_t index) {
+const void *arrayGet(const Array *array, const size_t index) {
 	return array->data[index];
 }
 
-const void *arrayCGet(const Array *array, size_t index) {
-	return (const void *)array->data[index];
-}
-
-void *arrayFirst(Array *array) {
-	return array->data[0];
-}
-
-const void *arrayCFirst(const Array *array) {
+const void *arrayFirst(const Array *array) {
 	return (const void *)array->data[0];
 }
 
-void *arrayLast(Array *array) {
+const void *arrayLast(const Array *array) {
 	return array->data[array->length - 1];
-}
-
-const void *arrayCLast(const Array *array) {
-	return (const void *)array->data[array->length - 1];
 }
 
 /// Change

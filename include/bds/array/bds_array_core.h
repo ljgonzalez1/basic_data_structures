@@ -4,7 +4,7 @@
 #include <stdbool.h>  // bool
 
 typedef struct bds_array {
-    void **payload;
+    void **data;
     size_t length;
 } Array;
 
@@ -23,15 +23,12 @@ void arrayFree(Array *array);  // Just frees itself
 size_t arrayLength(const Array *array);
 bool arrayIsEmpty(const Array *array);
 
-/// Access (read-only to `void **payload[i]`)
-void *arrayGet(Array *array, size_t index);
-const void *arrayCGet(const Array *array, size_t index);
-void *arrayFirst(Array *array);
-const void *arrayCFirst(const Array *array);
-void *arrayLast(Array *array);
+/// Access (read-only to `void **data[i]`)
+const void *arrayGet(const Array *array, size_t index);
+const void *arrayFirst(const Array *array);
 const void *arrayCLast(const Array *array);
 
 /// Change
-// sets payload[index] = data
+// sets array[index] = data
 bool arraySet(Array *array, size_t index, void *data);
 
