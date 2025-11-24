@@ -168,7 +168,7 @@ static size_t introPartition(
         }
 
         while (j > lo &&
-               introCompare(arrayGet(array, j), pivot, key) > 0) {
+               arrayKeyCompare(arrayGet(array, j), pivot, key) > 0) {
             j--;
         }
 
