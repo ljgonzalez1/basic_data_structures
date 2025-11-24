@@ -30,28 +30,26 @@
 /// ===============================================================
 
 /**
- * High-level flow:
- * 1) Detect natural runs (ascending/descending) and normalize to ascending.
- * 2) Ensure each run has at least `minrun` length using insertion sort.
+ * Flow:
+ * 1) Detect natural runs (asc/desc) and normalize to ascending.
+ * 2) Ensure each run is at least `minrun` via insertion sort.
  * 3) Push runs to a stack and collapse while invariants are violated.
- * 4) Merge runs with galloping (block copies when streaks appear).
+ * 4) Merge runs using galloping (copy blocks when streaks appear).
  */
 
 typedef struct tim_run {
-    size_t start_index;   // inclusive
-    size_t length;        // run length
+    size_t start_idx;   // inclusive
+    size_t length;      // run length
 } TimRun;
 
-#define TIM_STACK_MAX 40  // conservative stack size for very large inputs
+#define TIM_STACK_MAX 40  // conservative for very large inputs
 
 /// ===============================================================
 /// Utility: key-based comparison
 /// ===============================================================
 
 /**
- * Returns < 0 if datapoint_1 < datapoint_2,
- *          0 if equal,
- *        > 0 if datapoint_1 > datapoint_2, according to key().
+ * Returns < 0 if datapoint_1 < datapoint_2, 0 if equal, > 0 if >, by key().
  */
 static int timCompare(
     const void *datapoint_1,
@@ -60,7 +58,6 @@ static int timCompare(
 ) {
     const int key_1 = key(datapoint_1);
     const int key_2 = key(datapoint_2);
-
     if (key_1 < key_2) return -1;
     if (key_1 > key_2) return 1;
     return 0;
@@ -71,15 +68,15 @@ static int timCompare(
 /// ===============================================================
 
 /**
- * Computes TimSort's minimal run length in the range [32, 64] for large arrays.
+ * Compute TimSort's minimal run length (in [32, 64] for large arrays).
  */
-static size_t timMinRun(size_t array_length) {
-    size_t remainder_bits = 0;
-    while (array_length >= 64) {
-        remainder_bits |= array_length & 1u;
-        array_length >>= 1;
+static size_t timMinRun(size_t total_len) {
+    size_t rem_bits = 0;
+    while (total_len >= 64) {
+        rem_bits |= total_len & 1u;
+        total_len >>= 1;
     }
-    return array_length + remainder_bits;
+    return total_len + rem_bits;
 }
 
 /// ===============================================================
@@ -87,51 +84,52 @@ static size_t timMinRun(size_t array_length) {
 /// ===============================================================
 
 /**
- * Reverse the subarray in [low_inclusive, high_exclusive).
- * Both indices are 0-based; high_exclusive is exclusive.
+ * Reverse subarray in [low_idx, high_excl_idx). high_excl_idx is exclusive.
  */
 static void timReverseRange(
     Array *array,
-    const size_t low_inclusive,
-    const size_t high_exclusive
+    const size_t low_idx,
+    const size_t high_excl_idx
 ) {
-    if (high_exclusive == 0) return; // protect underflow when computing high_exclusive - 1
-    if (low_inclusive >= high_exclusive) return;
+    if (high_excl_idx == 0) return;    // protect underflow for high_excl_idx - 1
+    if (low_idx >= high_excl_idx) return;
 
-    size_t left_index  = low_inclusive;
-    size_t right_index = high_exclusive - 1;
+    size_t i = low_idx;
+    size_t j = high_excl_idx - 1;
 
-    while (left_index < right_index) {
-        arraySwap(array, left_index, right_index);
-        left_index++;
-        right_index--;
+    while (i < j) {
+        arraySwap(array, i, j);
+        i++;
+        j--;
     }
 }
 
 /**
- * Stable insertion sort over [low_inclusive, high_exclusive).
- * Great for small or partially ordered ranges.
+ * Stable insertion sort over [low_idx, high_excl_idx).
  */
 static void timInsertionSortRange(
     Array *array,
-    const size_t low_inclusive,
-    const size_t high_exclusive,
+    const size_t low_idx,
+    const size_t high_excl_idx,
     const key_val_func key
 ) {
-    if (high_exclusive - low_inclusive < 2) return;
+    if (high_excl_idx - low_idx < 2) return;
 
-    for (size_t pivot_index = low_inclusive + 1; pivot_index < high_exclusive; pivot_index++) {
-        void *pivot_value = arrayGet(array, pivot_index);
-        size_t scan_index = pivot_index;
+    for (size_t pivot_idx = low_idx + 1; pivot_idx < high_excl_idx; pivot_idx++) {
+        void *pivot_val = arrayGet(array, pivot_idx);
+        size_t scan_idx = pivot_idx;
 
-        // Shift larger elements to the right
-        while (scan_index > low_inclusive) {
-            void *previous_value = arrayGet(array, scan_index - 1);
-            if (timCompare(previous_value, pivot_value, key) <= 0) break; // stable: keep order for equals
-            arraySet(array, scan_index, previous_value);
-            scan_index--;
+        // Shift larger elements right
+        while (scan_idx > low_idx) {
+            void *prev_val = arrayGet(array, scan_idx - 1);
+
+            if (timCompare(prev_val, pivot_val, key) <= 0) break; // stable
+
+            arraySet(array, scan_idx, prev_val);
+            scan_idx--;
         }
-        arraySet(array, scan_index, pivot_value);
+
+        arraySet(array, scan_idx, pivot_val);
     }
 }
 
@@ -140,47 +138,51 @@ static void timInsertionSortRange(
 /// ===============================================================
 
 /**
- * Detect a run starting at `run_start_index` within an array of total `array_length`.
- * If descending, it is reversed to become ascending.
- * Returns the run length.
+ * Detect a run starting at `run_start_idx` within a full array of length `array_len`.
+ * If descending, reverse it to become ascending. Return run length.
  */
 static size_t timCountRunAndMakeAscending(
     Array *array,
-    const size_t run_start_index,
-    const size_t array_length,
+    const size_t run_start_idx,
+    const size_t array_len,
     const key_val_func key
 ) {
-    const size_t last_index_exclusive = array_length;
+    const size_t last_excl = array_len;
 
-    if (run_start_index >= last_index_exclusive - 1) return 1; // single-element run
+    if (run_start_idx >= last_excl - 1) return 1; // single element
 
-    size_t run_end_index = run_start_index + 1;
+    size_t run_end_idx = run_start_idx + 1;
 
-    const void *first_value  = arrayGet(array, run_start_index);
-    const void *second_value = arrayGet(array, run_end_index);
+    const void *first_val  = arrayGet(array, run_start_idx);
+    const void *second_val = arrayGet(array, run_end_idx);
 
     // Descending run
-    if (timCompare(second_value, first_value, key) < 0) {
-        while (run_end_index + 1 < last_index_exclusive) {
-            const void *prev_value = arrayGet(array, run_end_index);
-            const void *next_value = arrayGet(array, run_end_index + 1);
-            if (timCompare(next_value, prev_value, key) >= 0) break;
-            run_end_index++;
+    if (timCompare(second_val, first_val, key) < 0) {
+        while (run_end_idx + 1 < last_excl) {
+            const void *prev_val = arrayGet(array, run_end_idx);
+            const void *next_val = arrayGet(array, run_end_idx + 1);
+
+            if (timCompare(next_val, prev_val, key) >= 0) break;
+
+            run_end_idx++;
         }
+
         // Normalize to ascending
-        timReverseRange(array, run_start_index, run_end_index + 1);
+        timReverseRange(array, run_start_idx, run_end_idx + 1);
 
     } else {
         // Ascending run
-        while (run_end_index + 1 < last_index_exclusive) {
-            const void *prev_value = arrayGet(array, run_end_index);
-            const void *next_value = arrayGet(array, run_end_index + 1);
-            if (timCompare(next_value, prev_value, key) < 0) break;
-            run_end_index++;
+        while (run_end_idx + 1 < last_excl) {
+            const void *prev_val = arrayGet(array, run_end_idx);
+            const void *next_val = arrayGet(array, run_end_idx + 1);
+
+            if (timCompare(next_val, prev_val, key) < 0) break;
+
+            run_end_idx++;
         }
     }
 
-    return run_end_index - run_start_index + 1;
+    return run_end_idx - run_start_idx + 1;
 }
 
 /// ===============================================================
@@ -189,109 +191,113 @@ static size_t timCountRunAndMakeAscending(
 
 /**
  * Gallop Left:
- * On ascending buffer_array[buffer_base .. buffer_base + buffer_length),
- * return the count of elements <= pivot_value.
- * Equivalent to the first index i such that pivot_value < buffer_array[buffer_base + i].
- * This preserves stability (ties come from the left run first).
+ * In ascending `left_buff_arr[left_base_idx ... left_base_idx + left_len)`,
+ * return count of elements <= pivot_val.
+ * (First index `i` where `pivot_val < left_buff_arr[left_base_idx + i]`).
  */
 static size_t timGallopLeft(
-    const void *pivot_value,
-    void **buffer_array,
-    size_t buffer_base,
-    size_t buffer_length,
+    const void *pivot_val,
+    void **left_buff_arr,
+    const size_t left_base_idx,
+    const size_t left_len,
     const key_val_func key
 ) {
-    if (buffer_length == 0) return 0;
+    if (left_len == 0) return 0;
 
-    if (timCompare(pivot_value, buffer_array[buffer_base], key) < 0) {
+    if (timCompare(pivot_val, left_buff_arr[left_base_idx], key) < 0) {
         return 0;
     }
-    if (timCompare(pivot_value, buffer_array[buffer_base + buffer_length - 1], key) >= 0) {
-        return buffer_length;
+    if (timCompare(pivot_val, left_buff_arr[left_base_idx + left_len - 1], key) >= 0) {
+        return left_len;
     }
 
-    size_t low_index  = 0;
-    size_t high_index = 1;
+    size_t low_idx  = 0;
+    size_t high_idx = 1;
 
-    // Exponential search to bracket the answer in (low_index, high_index]
-    while (high_index < buffer_length &&
-           timCompare(pivot_value, buffer_array[buffer_base + high_index], key) >= 0) {
-        low_index  = high_index;
-        high_index = (high_index << 1) + 1; // 2*high_index + 1
-        if (high_index > buffer_length - 1) high_index = buffer_length - 1;
+    // Exponential search to bracket answer in (low_idx, high_idx]
+    while (high_idx < left_len &&
+           timCompare(pivot_val, left_buff_arr[left_base_idx + high_idx], key) >= 0) {
+
+        low_idx  = high_idx;
+        high_idx = (high_idx << 1) + 1;
+
+        if (high_idx > left_len - 1) high_idx = left_len - 1;
     }
 
-    // Now buffer_array[base+low_index] <= pivot_value < buffer_array[base+high_index]
-    size_t binary_left  = low_index + 1;
-    size_t binary_right = high_index;
+    // Now left_buff_arr[base+low_idx] <= pivot_val < left_buff_arr[base+high_idx]
+    size_t bin_left  = low_idx + 1;
+    size_t bin_right = high_idx;
 
-    // Binary search in (low_index, high_index] for first index where pivot_value < buffer_array[base+idx]
-    while (binary_left <= binary_right) {
-        size_t mid_index = binary_left + ((binary_right - binary_left) >> 1);
-        if (timCompare(pivot_value, buffer_array[buffer_base + mid_index], key) < 0) {
-            if (mid_index == 0) break; // safety (shouldn't happen)
-            binary_right = mid_index - 1;
+    // Binary search in (low_idx, high_idx] for first index with pivot_val < left_buff_arr[base+i]
+    while (bin_left <= bin_right) {
+        const size_t mid_idx = bin_left + ((bin_right - bin_left) >> 1);
+
+        if (timCompare(pivot_val, left_buff_arr[left_base_idx + mid_idx], key) < 0) {
+            if (mid_idx == 0) break; // safety
+
+            bin_right = mid_idx - 1;
+
         } else {
-            binary_left = mid_index + 1;
+            bin_left = mid_idx + 1;
         }
     }
 
-    return binary_left; // number of elements <= pivot_value
+    return bin_left; // number of elements <= pivot_val
 }
 
 /**
  * Gallop Right:
- * On ascending array[run_base .. run_base + run_length),
- * return the count of elements < pivot_value.
- * Equivalent to the first index i such that array[run_base + i] >= pivot_value.
- * Stability preserved (ties are taken from the left run).
+ * In ascending array[right_base_idx ... right_base_idx + right_len),
+ * return count of elements < pivot_val.
+ * (First index `i` where `array[right_base_idx + i] >= pivot_val`).
  */
 static size_t timGallopRight(
-    const void *pivot_value,
-    Array *array,
-    size_t run_base,
-    size_t run_length,
+    const void *pivot_val,
+    const Array *array,
+    const size_t right_base_idx,
+    const size_t right_len,
     const key_val_func key
 ) {
-    if (run_length == 0) return 0;
+    if (right_len == 0) return 0;
 
-    void *first_value_in_right = arrayGet(array, run_base);
-    if (timCompare(first_value_in_right, pivot_value, key) >= 0) {
-        return 0;
+    const void *first_val = arrayGet(array, right_base_idx);
+
+    if (timCompare(first_val, pivot_val, key) >= 0) return 0;
+
+    const void *last_val = arrayGet(array, right_base_idx + right_len - 1);
+
+    if (timCompare(last_val, pivot_val, key) < 0) return right_len;
+
+    size_t low_idx  = 0;
+    size_t high_idx = 1;
+
+    // Exponential search to bracket answer in (low_idx, high_idx]
+    while (high_idx < right_len &&
+           timCompare(arrayGet(array, right_base_idx + high_idx), pivot_val, key) < 0) {
+        low_idx  = high_idx;
+        high_idx = (high_idx << 1) + 1;
+
+        if (high_idx > right_len - 1) high_idx = right_len - 1;
     }
 
-    void *last_value_in_right = arrayGet(array, run_base + run_length - 1);
-    if (timCompare(last_value_in_right, pivot_value, key) < 0) {
-        return run_length;
-    }
+    // Now array[base+low_idx] < pivot_val <= array[base+high_idx]
+    size_t bin_left  = low_idx + 1;
+    size_t bin_right = high_idx;
 
-    size_t low_index  = 0;
-    size_t high_index = 1;
+    // Binary search in (low_idx, high_idx] for first index with array[base+i] >= pivot_val
+    while (bin_left <= bin_right) {
+        const size_t mid_idx = bin_left + ((bin_right - bin_left) >> 1);
+        if (timCompare(arrayGet(array, right_base_idx + mid_idx), pivot_val, key) < 0) {
+            bin_left = mid_idx + 1;
 
-    // Exponential search to bracket the answer in (low_index, high_index]
-    while (high_index < run_length &&
-           timCompare(arrayGet(array, run_base + high_index), pivot_value, key) < 0) {
-        low_index  = high_index;
-        high_index = (high_index << 1) + 1;
-        if (high_index > run_length - 1) high_index = run_length - 1;
-    }
-
-    // Now array[run_base+low_index] < pivot_value <= array[run_base+high_index]
-    size_t binary_left  = low_index + 1;
-    size_t binary_right = high_index;
-
-    // Binary search in (low_index, high_index] for first index with array[run_base+idx] >= pivot_value
-    while (binary_left <= binary_right) {
-        size_t mid_index = binary_left + ((binary_right - binary_left) >> 1);
-        if (timCompare(arrayGet(array, run_base + mid_index), pivot_value, key) < 0) {
-            binary_left = mid_index + 1;
         } else {
-            if (mid_index == 0) break; // safety
-            binary_right = mid_index - 1;
+            if (mid_idx == 0) break; // safety
+
+            bin_right = mid_idx - 1;
         }
     }
 
-    return binary_left; // number of elements < pivot_value
+    return bin_left; // number of elements < pivot_val
 }
 
 /// ===============================================================
@@ -300,85 +306,85 @@ static size_t timGallopRight(
 
 /**
  * Merge two adjacent ascending runs:
- *   left run : [merge_base_index, merge_base_index + left_length)
- *   right run: [merge_base_index + left_length, merge_base_index + left_length + right_length)
- * Stable. Uses a temporary buffer for the left run and galloping to copy blocks.
+ *   left :  [merge_base_idx, merge_base_idx + left_len)
+ *   right:  [merge_base_idx + left_len, merge_base_idx + left_len + right_len)
+ * Stable; uses a buffer for the left run and galloping for block copies.
  */
 static void timMergeAt(
     Array *array,
-    const size_t merge_base_index,
-    const size_t left_length,
-    const size_t right_length,
+    const size_t merge_base_idx,
+    const size_t left_len,
+    const size_t right_len,
     const key_val_func key
 ) {
-    // Temporary buffer for the entire left run
-    void **left_buffer_array = (void **)malloc(left_length * sizeof(void *));
-    if (!left_buffer_array) return; // simple OOM behavior: skip merge
+    void **left_buff_arr = (void **)malloc(left_len * sizeof(void *));
+    if (!left_buff_arr) return; // simple OOM behavior
 
-    for (size_t copy_index = 0; copy_index < left_length; copy_index++) {
-        left_buffer_array[copy_index] = arrayGet(array, merge_base_index + copy_index);
+    for (size_t copy_idx = 0; copy_idx < left_len; copy_idx++) {
+        left_buff_arr[copy_idx] = arrayGet(array, merge_base_idx + copy_idx);
     }
 
-    size_t left_index   = 0;
-    size_t right_index  = 0;
-    size_t write_index  = merge_base_index;
+    size_t left_idx  = 0;
+    size_t right_idx = 0;
+    size_t write_idx = merge_base_idx;
 
-    const size_t right_base_index = merge_base_index + left_length;
+    const size_t right_base_idx = merge_base_idx + left_len;
 
-    // Main merge loop with galloping on both sides
-    while (left_index < left_length && right_index < right_length) {
-        void *left_value  = left_buffer_array[left_index];
-        void *right_value = arrayGet(array, right_base_index + right_index);
+    // Merge with galloping on both sides
+    while (left_idx < left_len && right_idx < right_len) {
+        void *left_val  = left_buff_arr[left_idx];
+        void *right_val = arrayGet(array, right_base_idx + right_idx);
 
-        if (timCompare(left_value, right_value, key) <= 0) {
+        if (timCompare(left_val, right_val, key) <= 0) {
             // Stable: take from left
-            arraySet(array, write_index++, left_value);
-            left_index++;
+            arraySet(array, write_idx++, left_val);
+            left_idx++;
 
-            // Gallop on left: copy a block of elements <= right_value
-            if (left_index < left_length) {
-                size_t advance_count = timGallopLeft(
-                    right_value,
-                    left_buffer_array,
-                    left_index,
-                    left_length - left_index,
+            // Gallop on left: copy block of <= right_val
+            if (left_idx < left_len) {
+                const size_t adv_cnt = timGallopLeft(
+                    right_val,
+                    left_buff_arr,
+                    left_idx,
+                    left_len - left_idx,
                     key
                 );
-                for (size_t advance_index = 0; advance_index < advance_count; advance_index++) {
-                    arraySet(array, write_index++, left_buffer_array[left_index++]);
+
+                for (size_t k = 0; k < adv_cnt; ++k) {
+                    arraySet(array, write_idx++, left_buff_arr[left_idx++]);
                 }
             }
         } else {
             // Take from right
-            arraySet(array, write_index++, right_value);
-            right_index++;
+            arraySet(array, write_idx++, right_val);
+            right_idx++;
 
-            // Gallop on right: copy a block of elements < left_value
-            if (right_index < right_length) {
-                size_t advance_count = timGallopRight(
-                    left_value,
+            // Gallop on right: copy block of < left_val
+            if (right_idx < right_len) {
+                const size_t adv_cnt = timGallopRight(
+                    left_val,
                     array,
-                    right_base_index + right_index,
-                    right_length - right_index,
+                    right_base_idx + right_idx,
+                    right_len - right_idx,
                     key
                 );
-                for (size_t advance_index = 0; advance_index < advance_count; advance_index++) {
-                    void *value_to_move = arrayGet(array, right_base_index + right_index);
-                    arraySet(array, write_index++, value_to_move);
-                    right_index++;
+
+                for (size_t k = 0; k < adv_cnt; ++k) {
+                    void *val = arrayGet(array, right_base_idx + right_idx);
+                    arraySet(array, write_idx++, val);
+                    right_idx++;
                 }
             }
         }
     }
 
-    // Copy any remaining elements from the left run
-    while (left_index < left_length) {
-        arraySet(array, write_index++, left_buffer_array[left_index++]);
+    // Copy remaining left elements
+    while (left_idx < left_len) {
+        arraySet(array, write_idx++, left_buff_arr[left_idx++]);
     }
 
-    // Remaining elements in the right run are already in place
-
-    free(left_buffer_array);
+    // Remaining right elements are already in place
+    free(left_buff_arr);
 }
 
 /// ===============================================================
@@ -386,10 +392,10 @@ static void timMergeAt(
 /// ===============================================================
 
 /**
- * Collapse while invariants (simplified TimSort invariants) are violated:
+ * Collapse while simplified TimSort invariants are violated:
  *   - run[n-3].length > run[n-2].length + run[n-1].length
  *   - run[n-2].length > run[n-1].length
- * If violated, merge the pair that keeps sizes more balanced.
+ * Merge the pair that keeps sizes more balanced.
  */
 static void timMergeCollapse(
     Array *array,
@@ -398,51 +404,50 @@ static void timMergeCollapse(
     const key_val_func key
 ) {
     while (*stack_size > 1) {
-        size_t run_count = *stack_size;
+        const size_t n = *stack_size;
 
-        if (run_count >= 3) {
-            size_t length_run_A = run_stack[run_count - 3].length;
-            size_t length_run_B = run_stack[run_count - 2].length;
-            size_t length_run_C = run_stack[run_count - 1].length;
+        if (n >= 3) {
+            const size_t len_A = run_stack[n - 3].length;
+            const size_t len_B = run_stack[n - 2].length;
+            const size_t len_C = run_stack[n - 1].length;
 
-            // If any invariant is broken, merge
-            if (length_run_A <= length_run_B + length_run_C || length_run_B <= length_run_C) {
-                if (length_run_A < length_run_C) {
+            if (len_A <= len_B + len_C || len_B <= len_C) {
+                if (len_A < len_C) {
                     // Merge B and C
-                    size_t merge_base_index = run_stack[run_count - 2].start_index;
-                    size_t left_length      = run_stack[run_count - 2].length;
-                    size_t right_length     = run_stack[run_count - 1].length;
+                    const size_t base  = run_stack[n - 2].start_idx;
+                    const size_t l1    = run_stack[n - 2].length;
+                    const size_t l2    = run_stack[n - 1].length;
 
-                    timMergeAt(array, merge_base_index, left_length, right_length, key);
-                    run_stack[run_count - 2].length = left_length + right_length;
+                    timMergeAt(array, base, l1, l2, key);
+                    run_stack[n - 2].length = l1 + l2;
                     (*stack_size)--; // pop C
                 } else {
                     // Merge A and B
-                    size_t merge_base_index = run_stack[run_count - 3].start_index;
-                    size_t left_length      = run_stack[run_count - 3].length;
-                    size_t right_length     = run_stack[run_count - 2].length;
+                    const size_t base  = run_stack[n - 3].start_idx;
+                    const size_t l1    = run_stack[n - 3].length;
+                    const size_t l2    = run_stack[n - 2].length;
 
-                    timMergeAt(array, merge_base_index, left_length, right_length, key);
-                    run_stack[run_count - 3].length = left_length + right_length;
+                    timMergeAt(array, base, l1, l2, key);
+                    run_stack[n - 3].length = l1 + l2;
 
                     // Shift C down
-                    run_stack[run_count - 2] = run_stack[run_count - 1];
-                    (*stack_size)--; // pop
+                    run_stack[n - 2] = run_stack[n - 1];
+                    (*stack_size)--;
                 }
             } else {
                 break;
             }
 
         } else {
-            // With only two runs, ensure run[n-2].length > run[n-1].length
-            size_t length_left  = run_stack[run_count - 2].length;
-            size_t length_right = run_stack[run_count - 1].length;
+            // With two runs, enforce len_left > len_right
+            const size_t len_L = run_stack[n - 2].length;
+            const size_t len_R = run_stack[n - 1].length;
 
-            if (length_left <= length_right) {
-                size_t merge_base_index = run_stack[run_count - 2].start_index;
-                timMergeAt(array, merge_base_index, length_left, length_right, key);
-                run_stack[run_count - 2].length = length_left + length_right;
-                (*stack_size)--; // pop
+            if (len_L <= len_R) {
+                const size_t base = run_stack[n - 2].start_idx;
+                timMergeAt(array, base, len_L, len_R, key);
+                run_stack[n - 2].length = len_L + len_R;
+                (*stack_size)--;
             } else {
                 break;
             }
@@ -451,7 +456,7 @@ static void timMergeCollapse(
 }
 
 /**
- * Force-collapse the entire stack until a single run remains.
+ * Force-collapse the whole stack until a single run remains.
  */
 static void timMergeForceCollapse(
     Array *array,
@@ -460,89 +465,86 @@ static void timMergeForceCollapse(
     const key_val_func key
 ) {
     while (*stack_size > 1) {
-        size_t run_count = *stack_size;
+        const size_t n = *stack_size;
 
-        if (run_count >= 3) {
-            size_t length_run_A = run_stack[run_count - 3].length;
-            size_t length_run_C = run_stack[run_count - 1].length;
+        if (n >= 3) {
+            const size_t len_A = run_stack[n - 3].length;
+            const size_t len_C = run_stack[n - 1].length;
 
-            if (length_run_A < length_run_C) {
-                size_t merge_base_index = run_stack[run_count - 2].start_index;
-                size_t left_length      = run_stack[run_count - 2].length;
-                size_t right_length     = run_stack[run_count - 1].length;
+            if (len_A < len_C) {
+                const size_t base = run_stack[n - 2].start_idx;
+                const size_t l1   = run_stack[n - 2].length;
+                const size_t l2   = run_stack[n - 1].length;
 
-                timMergeAt(array, merge_base_index, left_length, right_length, key);
-                run_stack[run_count - 2].length = left_length + right_length;
+                timMergeAt(array, base, l1, l2, key);
+                run_stack[n - 2].length = l1 + l2;
                 (*stack_size)--;
-
             } else {
-                size_t merge_base_index = run_stack[run_count - 3].start_index;
-                size_t left_length      = run_stack[run_count - 3].length;
-                size_t right_length     = run_stack[run_count - 2].length;
+                const size_t base = run_stack[n - 3].start_idx;
+                const size_t l1   = run_stack[n - 3].length;
+                const size_t l2   = run_stack[n - 2].length;
 
-                timMergeAt(array, merge_base_index, left_length, right_length, key);
-                run_stack[run_count - 3].length = left_length + right_length;
-                run_stack[run_count - 2] = run_stack[run_count - 1];
+                timMergeAt(array, base, l1, l2, key);
+                run_stack[n - 3].length = l1 + l2;
+                run_stack[n - 2] = run_stack[n - 1];
                 (*stack_size)--;
             }
-
         } else {
-            // Only two runs left: merge them
-            size_t merge_base_index = run_stack[0].start_index;
-            size_t left_length      = run_stack[0].length;
-            size_t right_length     = run_stack[1].length;
+            // Only two runs: merge them
+            const size_t base = run_stack[0].start_idx;
+            const size_t l1   = run_stack[0].length;
+            const size_t l2   = run_stack[1].length;
 
-            timMergeAt(array, merge_base_index, left_length, right_length, key);
-            run_stack[0].length = left_length + right_length;
+            timMergeAt(array, base, l1, l2, key);
+            run_stack[0].length = l1 + l2;
             (*stack_size)--;
         }
     }
 }
 
 /// ===============================================================
-/// Public API: arrayTimSort / arrayTimSorted
+/// Public API
 /// ===============================================================
 
 void arrayTimSort(
     Array *array,
     const key_val_func key
 ) {
-    const size_t total_length = arrayLength(array);
-    if (total_length < 2) return;
+    const size_t total_len = arrayLength(array);
+    if (total_len < 2) return;
 
-    const size_t minrun_length = timMinRun(total_length);
+    const size_t minrun_len = timMinRun(total_len);
 
     TimRun run_stack[TIM_STACK_MAX];
     size_t stack_size = 0;
 
-    size_t remaining_count = total_length;
-    size_t current_index   = 0;
+    size_t remaining = total_len;
+    size_t curr_idx  = 0;
 
-    while (remaining_count > 0) {
+    while (remaining > 0) {
         // 1) Detect natural run and normalize to ascending
-        size_t run_length = timCountRunAndMakeAscending(array, current_index, total_length, key);
+        size_t run_len = timCountRunAndMakeAscending(array, curr_idx, total_len, key);
 
         // 2) Extend to minrun using insertion sort
-        if (run_length < minrun_length) {
-            const size_t target_length   = (minrun_length < remaining_count) ? minrun_length : remaining_count;
-            const size_t end_exclusive   = current_index + target_length;
-            timInsertionSortRange(array, current_index, end_exclusive, key);
-            run_length = target_length;
+        if (run_len < minrun_len) {
+            const size_t target_len = minrun_len < remaining ? minrun_len : remaining;
+            timInsertionSortRange(array, curr_idx, curr_idx + target_len, key);
+            run_len = target_len;
         }
 
-        // 3) Push to stack
-        run_stack[stack_size].start_index = current_index;
-        run_stack[stack_size].length      = run_length;
+        // 3) Push run
+        run_stack[stack_size].start_idx = curr_idx;
+        run_stack[stack_size].length    = run_len;
         stack_size++;
 
         // 4) Collapse while invariants are violated
         timMergeCollapse(array, run_stack, &stack_size, key);
 
-        current_index   += run_length;
-        remaining_count -= run_length;
+        curr_idx  += run_len;
+        remaining -= run_len;
     }
 
-    // 5) Final collapse: merge everything into a single run
+    // 5) Final collapse
     timMergeForceCollapse(array, run_stack, &stack_size, key);
 }
 
@@ -550,9 +552,9 @@ Array *arrayTimSorted(
     const Array *array,
     const key_val_func key
 ) {
-    Array *sorted_array = arrayShallowCopy(array);
-    if (!sorted_array) return NULL;
+    Array *sorted = arrayShallowCopy(array);
+    if (!sorted) return NULL;
 
-    arrayTimSort(sorted_array, key);
-    return sorted_array;
+    arrayTimSort(sorted, key);
+    return sorted;
 }
