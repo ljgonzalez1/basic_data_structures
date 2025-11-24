@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stddef.h>  // size_t, SIZE_MAX
 
 // ======================================================
@@ -79,25 +80,26 @@ static int          g_int_data_32[INT32_LEN];
 static void init_test_data(void) {
     // 56 structs con valores pseudo-aleatorios en important_value
     for (size_t i = 0; i < STRUCT_ARR_LEN; ++i) {
-        int base = (int)((i * 13u) % 101u);  // 0..100 pseudo-random
+        const int base = (int)((i * 13u) % 101u);  // 0..100 pseudo-random
         g_struct_data_56[i].important_value = base - 50;  // -50..50
         g_struct_data_56[i].dummy1 = (int)i;
         g_struct_data_56[i].dummy2 = (int)(i * 2);
     }
 
     // 12 ints, negativos y positivos
-    int tmp12[INT12_LEN] = { -5, 3, 0, -2, 8, -1, 10, 7, -9, 4, -3, 2 };
     for (size_t i = 0; i < INT12_LEN; ++i) {
+        const int tmp12[INT12_LEN] = { -5, 3, 0, -2, 8, -1, 10, 7, -9, 4, -3, 2 };
         g_int_data_12[i] = tmp12[i];
     }
 
     // 32 ints con valores repetidos
-    int tmp32[INT32_LEN] = {
+    const int tmp32[INT32_LEN] = {
         1, 5, 3, 5, 2, 1, 4, 3,
         6, 2, 7, 5, 8, 3, 1, 6,
         4, 2, 7, 8, 5, 3, 1, 4,
         6, 2, 7, 5, 8, 3, 1, 4
     };
+
     for (size_t i = 0; i < INT32_LEN; ++i) {
         g_int_data_32[i] = tmp32[i];
     }
@@ -106,28 +108,37 @@ static void init_test_data(void) {
 // Construye arrays que apuntan a estos datos (no los liberan)
 static Array *build_struct_array_56(void) {
     Array *a = arrayNew(STRUCT_ARR_LEN);
+
     if (!a) return NULL;
+
     for (size_t i = 0; i < STRUCT_ARR_LEN; ++i) {
         arraySet(a, i, &g_struct_data_56[i]);
     }
+
     return a;
 }
 
 static Array *build_int_array_12(void) {
     Array *a = arrayNew(INT12_LEN);
+
     if (!a) return NULL;
+
     for (size_t i = 0; i < INT12_LEN; ++i) {
         arraySet(a, i, &g_int_data_12[i]);
     }
+
     return a;
 }
 
 static Array *build_int_array_32(void) {
     Array *a = arrayNew(INT32_LEN);
+
     if (!a) return NULL;
+
     for (size_t i = 0; i < INT32_LEN; ++i) {
         arraySet(a, i, &g_int_data_32[i]);
     }
+
     return a;
 }
 
@@ -142,25 +153,31 @@ static int key_int(const void *elem) {
 
 static int key_dummy_payload(const void *elem) {
     if (!elem) return 0;
+
     const DummyPayload *p = (const DummyPayload *)elem;
+
     return p->important_value;
 }
 
 static bool filter_int_is_even(const void *elem) {
     if (!elem) return false;
     const int v = *(const int *)elem;
-    return (v % 2) == 0;
+    return v % 2 == 0;
 }
 
 static bool filter_int_is_negative(const void *elem) {
     if (!elem) return false;
+
     const int v = *(const int *)elem;
+
     return v < 0;
 }
 
 static bool filter_struct_important_positive(const void *elem) {
     if (!elem) return false;
+
     const DummyPayload *p = (const DummyPayload *)elem;
+
     return p->important_value > 0;
 }
 
@@ -169,7 +186,9 @@ static unsigned int g_deleter_calls = 0;
 
 static void int_heap_deleter(void *elem) {
     if (!elem) return;
+
     g_deleter_calls++;
+
     free(elem);
 }
 
@@ -182,8 +201,8 @@ static void assert_array_sorted_by_key(const Array *a, key_val_func key) {
     if (len == 0) return;
 
     for (size_t i = 1; i < len; ++i) {
-        int prev = key(arrayGet(a, i - 1));
-        int curr = key(arrayGet(a, i));
+        const int prev = key(arrayGet(a, i - 1));
+        const int curr = key(arrayGet(a, i));
         TEST_ASSERT(prev <= curr);
     }
 }
@@ -247,12 +266,15 @@ static void test_array_shallow_copy(void) {
     if (!a) return;
 
     int vals[4] = { 5, 1, 9, 3 };
+
     for (size_t i = 0; i < 4; ++i) {
         arraySet(a, i, &vals[i]);
     }
 
     Array *b = arrayShallowCopy(a);
+
     TEST_ASSERT(b != NULL);
+
     if (!b) {
         arrayFree(a);
         return;
@@ -264,6 +286,7 @@ static void test_array_shallow_copy(void) {
     for (size_t i = 0; i < 4; ++i) {
         TEST_ASSERT(arrayGet(a, i) == arrayGet(b, i));
     }
+
     TEST_ASSERT(a != b);
 
     arrayFree(a);
@@ -277,10 +300,12 @@ static void test_array_shallow_copy(void) {
 static void test_array_find_and_count(void) {
     // ---- 12 ints (negativos + positivos) ----
     Array *a12 = build_int_array_12();
+
     TEST_ASSERT(a12 != NULL);
+
     if (a12) {
         // primer negativo: índice 0
-        size_t idx_neg = arrayIdxOf(a12, filter_int_is_negative);
+        const size_t idx_neg = arrayIdxOf(a12, filter_int_is_negative);
         TEST_ASSERT_EQ_SIZE(0u, idx_neg);
 
         // negativos totales: -5, -2, -1, -9, -3 → 5
@@ -288,8 +313,8 @@ static void test_array_find_and_count(void) {
         TEST_ASSERT_EQ_UINT(5u, neg_count);
 
         // mínimo y máximo
-        size_t min_idx = arrayMinIdx(a12, key_int);  // -9 en índice 8
-        size_t max_idx = arrayMaxIdx(a12, key_int);  // 10 en índice 6
+        const size_t min_idx = arrayMinIdx(a12, key_int);  // -9 en índice 8
+        const size_t max_idx = arrayMaxIdx(a12, key_int);  // 10 en índice 6
         TEST_ASSERT_EQ_SIZE(8u, min_idx);
         TEST_ASSERT_EQ_SIZE(6u, max_idx);
 
@@ -299,18 +324,21 @@ static void test_array_find_and_count(void) {
     // ---- 32 ints con repetidos ----
     Array *a32 = build_int_array_32();
     TEST_ASSERT(a32 != NULL);
+
     if (a32) {
         // primer par: valor 2 en índice 4
-        size_t first_even_idx = arrayIdxOf(a32, filter_int_is_even);
+        const size_t first_even_idx = arrayIdxOf(a32, filter_int_is_even);
         TEST_ASSERT_EQ_SIZE(4u, first_even_idx);
 
         // número de pares (lo calculamos aquí mismo)
         unsigned int expected_even = 0;
+
         for (size_t i = 0; i < INT32_LEN; ++i) {
-            if ((g_int_data_32[i] % 2) == 0) {
+            if (g_int_data_32[i] % 2 == 0) {
                 expected_even++;
             }
         }
+
         unsigned int even_count = arrayCount(a32, filter_int_is_even);
         TEST_ASSERT_EQ_UINT(expected_even, even_count);
 
@@ -320,6 +348,7 @@ static void test_array_find_and_count(void) {
     // ---- 56 structs con important_value ----
     Array *as = build_struct_array_56();
     TEST_ASSERT(as != NULL);
+
     if (as) {
         unsigned int expected_positive = 0;
         size_t expected_min_idx = 0;
@@ -331,34 +360,37 @@ static void test_array_find_and_count(void) {
 
         for (size_t i = 0; i < STRUCT_ARR_LEN; ++i) {
             DummyPayload *p = &g_struct_data_56[i];
-            int v = key_dummy_payload(p);
+            const int v = key_dummy_payload(p);
 
             if (filter_struct_important_positive(p)) {
                 if (expected_first_positive_idx == SIZE_MAX) {
                     expected_first_positive_idx = i;
                 }
+
                 expected_positive++;
             }
+
             if (v < min_val) {
                 min_val = v;
                 expected_min_idx = i;
             }
+
             if (v > max_val) {
                 max_val = v;
                 expected_max_idx = i;
             }
         }
 
-        unsigned int count_positive =
+        const unsigned int count_positive =
             arrayCount(as, filter_struct_important_positive);
         TEST_ASSERT_EQ_UINT(expected_positive, count_positive);
 
-        size_t idx_first_pos =
+        const size_t idx_first_pos =
             arrayIdxOf(as, filter_struct_important_positive);
         TEST_ASSERT_EQ_SIZE(expected_first_positive_idx, idx_first_pos);
 
-        size_t min_idx_s = arrayMinIdx(as, key_dummy_payload);
-        size_t max_idx_s = arrayMaxIdx(as, key_dummy_payload);
+        const size_t min_idx_s = arrayMinIdx(as, key_dummy_payload);
+        const size_t max_idx_s = arrayMaxIdx(as, key_dummy_payload);
         TEST_ASSERT_EQ_SIZE(expected_min_idx, min_idx_s);
         TEST_ASSERT_EQ_SIZE(expected_max_idx, max_idx_s);
 
@@ -399,7 +431,7 @@ static void test_array_free_with_deleter(void) {
 // Tests de sorting
 // ======================================================
 
-typedef void   (*sort_inplace_func)(Array *array, key_val_func key);
+typedef void (*sort_inplace_func)(Array *array, key_val_func key);
 typedef Array *(*sort_newarray_func)(const Array *array, key_val_func key);
 
 static void test_one_sort_inplace(sort_inplace_func sorter) {
@@ -407,6 +439,7 @@ static void test_one_sort_inplace(sort_inplace_func sorter) {
     {
         Array *a = build_struct_array_56();
         TEST_ASSERT(a != NULL);
+
         if (a) {
             sorter(a, key_dummy_payload);
             assert_array_sorted_by_key(a, key_dummy_payload);
@@ -418,6 +451,7 @@ static void test_one_sort_inplace(sort_inplace_func sorter) {
     {
         Array *a = build_int_array_12();
         TEST_ASSERT(a != NULL);
+
         if (a) {
             sorter(a, key_int);
             assert_array_sorted_by_key(a, key_int);
@@ -429,6 +463,7 @@ static void test_one_sort_inplace(sort_inplace_func sorter) {
     {
         Array *a = build_int_array_32();
         TEST_ASSERT(a != NULL);
+
         if (a) {
             sorter(a, key_int);
             assert_array_sorted_by_key(a, key_int);
@@ -442,9 +477,11 @@ static void test_one_sort_newarray(sort_newarray_func sorter) {
     {
         Array *orig = build_struct_array_56();
         TEST_ASSERT(orig != NULL);
+
         if (orig) {
             Array *sorted = sorter(orig, key_dummy_payload);
             TEST_ASSERT(sorted != NULL);
+
             if (sorted) {
                 assert_array_sorted_by_key(sorted, key_dummy_payload);
                 arrayFree(sorted);
@@ -457,9 +494,11 @@ static void test_one_sort_newarray(sort_newarray_func sorter) {
     {
         Array *orig = build_int_array_12();
         TEST_ASSERT(orig != NULL);
+
         if (orig) {
             Array *sorted = sorter(orig, key_int);
             TEST_ASSERT(sorted != NULL);
+
             if (sorted) {
                 assert_array_sorted_by_key(sorted, key_int);
                 arrayFree(sorted);
@@ -472,13 +511,16 @@ static void test_one_sort_newarray(sort_newarray_func sorter) {
     {
         Array *orig = build_int_array_32();
         TEST_ASSERT(orig != NULL);
+
         if (orig) {
             Array *sorted = sorter(orig, key_int);
             TEST_ASSERT(sorted != NULL);
+
             if (sorted) {
                 assert_array_sorted_by_key(sorted, key_int);
                 arrayFree(sorted);
             }
+
             arrayFree(orig);
         }
     }
@@ -535,6 +577,7 @@ int main(void) {
     if (g_tests_failed == 0) {
         printf("All tests PASSED.\n");
         return EXIT_SUCCESS;
+
     } else {
         printf("Some tests FAILED.\n");
         return EXIT_FAILURE;
