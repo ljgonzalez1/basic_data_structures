@@ -33,7 +33,7 @@ Array *arrayShallowCopy(const Array *array) {
 }
 
 void arrayFreeWith(Array *array, const deleter_func deleter) {
-	if (!!deleter) {
+	if (!!deleter && arrayExists(array)) {
 		for (size_t i = 0; i < arrayLength(array); i++) {
 			void *datapoint = arrayGet(array, i);
 			deleter(datapoint);
