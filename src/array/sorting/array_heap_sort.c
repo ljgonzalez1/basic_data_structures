@@ -1,6 +1,7 @@
 // Heapsort O(n log n)
 
 #include "../../../include/bds/array/bds_array_sort.h"
+#include "../../../include/bds/array/bds_array_utils.h"
 
 /// ===============================================================
 /// Max-heap helpers (operating directly over Array)

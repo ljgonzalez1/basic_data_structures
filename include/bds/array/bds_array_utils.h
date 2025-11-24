@@ -14,3 +14,12 @@ static inline int arrayKeyCompare(
     if (key_1 > key_2) return 1;
     return 0;
 }
+
+static inline void arraySwap(Array *array, const size_t idx1, const size_t idx2) {
+    if (idx1 == idx2) return;
+
+    void *temp = arrayGet(array, idx1);
+    arraySet(array, idx1, arrayGet(array, idx2));
+    arraySet(array, idx2, temp);
+}
+

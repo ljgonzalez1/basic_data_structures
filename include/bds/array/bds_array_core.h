@@ -45,11 +45,3 @@ static inline void *arrayLast(const Array *array) {
 static inline void arraySet(Array *array, const size_t index, void *data) {
     array->data[index] = data;
 }
-
-static inline void arraySwap(Array *array, const size_t idx1, const size_t idx2) {
-    if (idx1 == idx2) return;
-
-    void *temp = arrayGet(array, idx1);
-    arraySet(array, idx1, arrayGet(array, idx2));
-    arraySet(array, idx2, temp);
-}
