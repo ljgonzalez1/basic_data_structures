@@ -416,7 +416,7 @@ void arrayTimSort(
 
         // 2) Extend run to at least minrun using insertion sort
         if (run_len < minrun) {
-            const size_t force = (minrun < remaining) ? minrun : remaining;
+            const size_t force = minrun < remaining ? minrun : remaining;
             const size_t hi = curr + force;
             timInsertionSortRange(array, curr, hi, key);
             run_len = force;
