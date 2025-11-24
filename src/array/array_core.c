@@ -33,9 +33,11 @@ Array *arrayShallowCopy(const Array *array) {
 }
 
 void arrayFreeWith(Array *array, const deleter_func deleter) {
-	for (size_t i = 0; i < arrayLength(array); i++) {
-		void *datapoint = arrayGet(array, i);
-		deleter(datapoint);
+	if (!!deleter && arrayExists(array)) {
+		for (size_t i = 0; i < arrayLength(array); i++) {
+			void *datapoint = arrayGet(array, i);
+			deleter(datapoint);
+		}
 	}
 
 	arrayFree(array);
@@ -43,6 +45,8 @@ void arrayFreeWith(Array *array, const deleter_func deleter) {
 
 // Just frees itself
 void arrayFree(Array *array) {
+	if (!arrayExists(array)) return;
+
 	free(array->data);
 	free(array);
 }

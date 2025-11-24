@@ -27,35 +27,43 @@ Heap *heapShallowCopy(const Heap *heap);
 void heapFreeWith(Heap *heap, deleter_func deleter);  // Frees payloads according to func
 void heapFree(Heap *heap);  // Just frees itself
 
+/// Helper
+static inline bool heapExists(const Heap *heap) {
+    return !!heap;
+}
+
 /// Info
 static inline size_t heapLength(const Heap *heap) {
-    return heap->length;
+    return heapExists(heap) ? heap->length : 0;
 }
 
 static inline bool heapIsEmpty(const Heap *heap) {
-    return heap->length == 0;
+    return heapExists(heap) ? heap->length == 0 : true;
 }
 
 /// Access
 static inline void *heapGet(const Heap *heap, const size_t index) {
-    return heap->data[index];
+    return index < heapLength(heap) ? heap->data[index] : NULL;
 }
 
 /// Change
 // sets heap[index] = data
 static inline void heapSet(Heap *heap, const size_t index, void *data) {
+    if (!heapExists(heap) || index >= heapLength(heap)) return;
     heap->data[index] = data;
 }
 
-static inline void heapSwap(Heap *heap, const size_t idx1, const size_t idx2) {
-    if (idx1 == idx2) return;
+/// Dependent functions (for consistency with other types)
 
-    void *temp = heapGet(heap, idx1);
-    heapSet(heap, idx1, heapGet(heap, idx2));
-    heapSet(heap, idx2, temp);
+/// Helpers
+static inline bool maxHeapExists(const MaxHeap *max_heap) {
+    return heapExists((const Heap *)max_heap);
 }
 
-/// Dependent functions (for consistency with other types)
+static inline bool minHeapExists(const MinHeap *min_heap) {
+    return heapExists((const Heap *)min_heap);
+}
+
 /// Lifecycle
 
 static inline MinHeap *minHeapShallowCopyConst(const MinHeap *min_heap) {
@@ -125,14 +133,6 @@ static inline void minHeapSet(MinHeap *heap, const size_t index, void *data) {
 
 static inline void maxHeapSet(MaxHeap *heap, const size_t index, void *data) {
     heapSet((Heap *)heap, index, data);
-}
-
-static inline void minHeapSwap(MinHeap *heap, const size_t idx1, const size_t idx2) {
-    heapSwap((Heap *)heap, idx1, idx2);
-}
-
-static inline void maxHeapSwap(MaxHeap *heap, const size_t idx1, const size_t idx2) {
-    heapSwap((Heap *)heap, idx1, idx2);
 }
 
 void minHeapify(MinHeap *min_heap, key_val_func key);

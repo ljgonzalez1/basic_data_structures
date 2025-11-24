@@ -1,6 +1,7 @@
 /// Gnome Sort O(n²)
 
 #include "../../../include/bds/array/bds_array_sort.h"
+#include "../../../include/bds/array/bds_array_utils.h"
 
 void arrayGnomeSort(Array *array, const key_val_func key) {
     // Similar to insertion sort

@@ -1,6 +1,7 @@
 /// Bubble Sort O(n²)
 
 #include "../../../include/bds/array/bds_array_sort.h"
+#include "../../../include/bds/array/bds_array_utils.h"
 
 void arrayBubbleSort(Array *array, const key_val_func key) {
     size_t length = arrayLength(array);
