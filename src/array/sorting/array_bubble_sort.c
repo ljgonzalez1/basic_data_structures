@@ -1,4 +1,5 @@
-#include "../../../include/bds/array/bds_array_core.h"
+/// Bubble Sort O(n²)
+
 #include "../../../include/bds/array/bds_array_sort.h"
 
 void arrayBubbleSort(Array *array, const key_val_func key) {
