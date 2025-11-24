@@ -1,6 +1,7 @@
 #include "../../../include/bds/array/bds_array_core.h"
 #include "../../../include/bds/array/bds_array_sort.h"
 
+/* **INSERTION SORT WORKS BETTER WITH PARTIALLY SORTED ARRAYS**. */
 void arrayInsertionSort(Array *array, const key_val_func key) {
     // Subarray sorted at the left
     const size_t length = arrayLength(array);
