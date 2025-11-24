@@ -1,6 +1,7 @@
 /// Intro Sort O(n log n)
 
 #include "../../../include/bds/array/bds_array_core.h"
+#include "../../../include/bds/array/bds_array_utils.h"
 #include "../../../include/bds/array/bds_array_sort.h"
 
 /**
@@ -8,21 +9,6 @@
  */
 
 #define INTRO_INSERTION_THRESHOLD 16
-
-/**
- * Returns < 0 if a < b, > 0 if a > b, according to key().
- */
-static inline int introCompare(
-    const void *a,
-    const void *b,
-    const key_val_func key
-) {
-    const int ka = key(a);
-    const int kb = key(b);
-    if (ka < kb) return -1;
-    if (ka > kb) return 1;
-    return 0;
-}
 
 // ===============================================================
 // Utility: integer log2 for size_t
@@ -65,7 +51,7 @@ static void introInsertionSort(
 
         // Shift elements greater than pivot to the right
         while (j > lo &&
-               introCompare(arrayGet(array, j - 1), pivot, key) > 0) {
+               arrayKeyCompare(arrayGet(array, j - 1), pivot, key) > 0) {
 
             arraySet(array, j, arrayGet(array, j - 1));
             j--;
@@ -98,12 +84,12 @@ static void introHeapSiftDown(
 
         size_t largest = root;
 
-        if (introCompare(arrayGet(array, left), arrayGet(array, largest), key) > 0) {
+        if (arrayKeyCompare(arrayGet(array, left), arrayGet(array, largest), key) > 0) {
             largest = left;
         }
 
         if (right < heap_hi &&
-            introCompare(arrayGet(array, right), arrayGet(array, largest), key) > 0) {
+            arrayKeyCompare(arrayGet(array, right), arrayGet(array, largest), key) > 0) {
             largest = right;
         }
 
@@ -158,13 +144,13 @@ static size_t introPartition(
     const size_t hi_1 = hi - 1;
 
     // Median-of-three on (lo, mid, hi-1)
-    if (introCompare(arrayGet(array, mid), arrayGet(array, lo), key) < 0)
+    if (arrayKeyCompare(arrayGet(array, mid), arrayGet(array, lo), key) < 0)
         arraySwap(array, lo, mid);
 
-    if (introCompare(arrayGet(array, hi_1), arrayGet(array, lo), key) < 0)
+    if (arrayKeyCompare(arrayGet(array, hi_1), arrayGet(array, lo), key) < 0)
         arraySwap(array, lo, hi_1);
 
-    if (introCompare(arrayGet(array, hi_1), arrayGet(array, mid), key) < 0)
+    if (arrayKeyCompare(arrayGet(array, hi_1), arrayGet(array, mid), key) < 0)
         arraySwap(array, mid, hi_1);
 
     // Use mid as pivot; move it near the end (hi-2)
@@ -178,7 +164,7 @@ static size_t introPartition(
 
     while (1) {
         while (i < pivot_idx_tmp &&
-               introCompare(arrayGet(array, i), pivot, key) < 0) {
+               arrayKeyCompare(arrayGet(array, i), pivot, key) < 0) {
             i++;
         }
 

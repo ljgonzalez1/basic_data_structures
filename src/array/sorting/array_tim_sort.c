@@ -1,9 +1,11 @@
 /// TimSort O(n log n)
 
 #include "../../../include/bds/array/bds_array_core.h"
+#include "../../../include/bds/array/bds_array_utils.h"
 #include "../../../include/bds/array/bds_array_sort.h"
 
 #include <stdlib.h>
+
 
 // Hybrid sorting algorithm derived from merge sort and insertion sort.
 // Uses RUNs of ordered elements to optimize sorting time.
@@ -45,25 +47,6 @@ typedef struct tim_run {
 } TimRun;
 
 #define TIM_STACK_MAX 40  // conservative for very large inputs
-
-/// ===============================================================
-/// Utility: key-based comparison
-/// ===============================================================
-
-/**
- * Returns < 0 if datapoint_1 < datapoint_2, 0 if equal, > 0 if >, by key().
- */
-static int timCompare(
-    const void *datapoint_1,
-    const void *datapoint_2,
-    const key_val_func key
-) {
-    const int key_1 = key(datapoint_1);
-    const int key_2 = key(datapoint_2);
-    if (key_1 < key_2) return -1;
-    if (key_1 > key_2) return 1;
-    return 0;
-}
 
 /// ===============================================================
 /// minrun computation
@@ -125,7 +108,7 @@ static void timInsertionSortRange(
         while (scan_idx > low_idx) {
             void *prev_val = arrayGet(array, scan_idx - 1);
 
-            if (timCompare(prev_val, pivot_val, key) <= 0) break; // stable
+            if (arrayKeyCompare(prev_val, pivot_val, key) <= 0) break; // stable
 
             arraySet(array, scan_idx, prev_val);
             scan_idx--;
@@ -159,12 +142,12 @@ static size_t timCountRunAndMakeAscending(
     const void *second_val = arrayGet(array, run_end_idx);
 
     // Descending run
-    if (timCompare(second_val, first_val, key) < 0) {
+    if (arrayKeyCompare(second_val, first_val, key) < 0) {
         while (run_end_idx + 1 < last_excl) {
             const void *prev_val = arrayGet(array, run_end_idx);
             const void *next_val = arrayGet(array, run_end_idx + 1);
 
-            if (timCompare(next_val, prev_val, key) >= 0) break;
+            if (arrayKeyCompare(next_val, prev_val, key) >= 0) break;
 
             run_end_idx++;
         }
@@ -178,7 +161,7 @@ static size_t timCountRunAndMakeAscending(
             const void *prev_val = arrayGet(array, run_end_idx);
             const void *next_val = arrayGet(array, run_end_idx + 1);
 
-            if (timCompare(next_val, prev_val, key) < 0) break;
+            if (arrayKeyCompare(next_val, prev_val, key) < 0) break;
 
             run_end_idx++;
         }
@@ -206,10 +189,10 @@ static size_t timGallopLeft(
 ) {
     if (left_len == 0) return 0;
 
-    if (timCompare(pivot_val, left_buff_arr[left_base_idx], key) < 0) {
+    if (arrayKeyCompare(pivot_val, left_buff_arr[left_base_idx], key) < 0) {
         return 0;
     }
-    if (timCompare(pivot_val, left_buff_arr[left_base_idx + left_len - 1], key) >= 0) {
+    if (arrayKeyCompare(pivot_val, left_buff_arr[left_base_idx + left_len - 1], key) >= 0) {
         return left_len;
     }
 
@@ -218,7 +201,7 @@ static size_t timGallopLeft(
 
     // Exponential search to bracket answer in (low_idx, high_idx]
     while (high_idx < left_len &&
-           timCompare(pivot_val, left_buff_arr[left_base_idx + high_idx], key) >= 0) {
+           arrayKeyCompare(pivot_val, left_buff_arr[left_base_idx + high_idx], key) >= 0) {
 
         low_idx  = high_idx;
         high_idx = (high_idx << 1) + 1;
@@ -234,7 +217,7 @@ static size_t timGallopLeft(
     while (bin_left <= bin_right) {
         const size_t mid_idx = bin_left + ((bin_right - bin_left) >> 1);
 
-        if (timCompare(pivot_val, left_buff_arr[left_base_idx + mid_idx], key) < 0) {
+        if (arrayKeyCompare(pivot_val, left_buff_arr[left_base_idx + mid_idx], key) < 0) {
             if (mid_idx == 0) break; // safety
 
             bin_right = mid_idx - 1;
@@ -264,18 +247,18 @@ static size_t timGallopRight(
 
     const void *first_val = arrayGet(array, right_base_idx);
 
-    if (timCompare(first_val, pivot_val, key) >= 0) return 0;
+    if (arrayKeyCompare(first_val, pivot_val, key) >= 0) return 0;
 
     const void *last_val = arrayGet(array, right_base_idx + right_len - 1);
 
-    if (timCompare(last_val, pivot_val, key) < 0) return right_len;
+    if (arrayKeyCompare(last_val, pivot_val, key) < 0) return right_len;
 
     size_t low_idx  = 0;
     size_t high_idx = 1;
 
     // Exponential search to bracket answer in (low_idx, high_idx]
     while (high_idx < right_len &&
-           timCompare(arrayGet(array, right_base_idx + high_idx), pivot_val, key) < 0) {
+           arrayKeyCompare(arrayGet(array, right_base_idx + high_idx), pivot_val, key) < 0) {
         low_idx  = high_idx;
         high_idx = (high_idx << 1) + 1;
 
@@ -289,7 +272,7 @@ static size_t timGallopRight(
     // Binary search in (low_idx, high_idx] for first index with array[base+i] >= pivot_val
     while (bin_left <= bin_right) {
         const size_t mid_idx = bin_left + ((bin_right - bin_left) >> 1);
-        if (timCompare(arrayGet(array, right_base_idx + mid_idx), pivot_val, key) < 0) {
+        if (arrayKeyCompare(arrayGet(array, right_base_idx + mid_idx), pivot_val, key) < 0) {
             bin_left = mid_idx + 1;
 
         } else {
@@ -337,7 +320,7 @@ static void timMergeAt(
         void *left_val  = left_buff_arr[left_idx];
         void *right_val = arrayGet(array, right_base_idx + right_idx);
 
-        if (timCompare(left_val, right_val, key) <= 0) {
+        if (arrayKeyCompare(left_val, right_val, key) <= 0) {
             // Stable: take from left
             arraySet(array, write_idx++, left_val);
             left_idx++;
