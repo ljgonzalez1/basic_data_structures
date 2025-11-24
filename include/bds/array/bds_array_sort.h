@@ -307,20 +307,127 @@ void arrayQuickSort(Array *array, key_val_func key);
 /// Sorting (returns NEW sorted array)
 
 // AVG: O(n²)
+/**
+ * @brief Returns a new array sorted using Bubble Sort.
+ *
+ * Creates a shallow copy of the input array and sorts it in-place.
+ *
+ * @param array Source array. May be NULL.
+ * @param key   Function used to extract integer keys.
+ * @return New sorted array, or NULL on allocation failure.
+ */
 Array *arrayBubbleSorted (const Array *array, key_val_func key);
+
+/**
+ * @brief Returns a new array sorted using Insertion Sort.
+ *
+ * Creates a shallow copy of the input array and sorts it in-place.
+ *
+ * @param array Source array. May be NULL.
+ * @param key   Function used to extract integer keys.
+ * @return New sorted array, or NULL on allocation failure.
+ */
 Array *arrayInsertionSorted(const Array *array, key_val_func key);
+
+/**
+ * @brief Returns a new array sorted using Selection Sort.
+ *
+ * Creates a shallow copy of the input array and sorts it in-place.
+ *
+ * @param array Source array. May be NULL.
+ * @param key   Function used to extract integer keys.
+ * @return New sorted array, or NULL on allocation failure.
+ */
 Array *arraySelectionSorted(const Array *array, key_val_func key);
+
+/**
+ * @brief Returns a new array sorted using Cocktail Shaker Sort.
+ *
+ * Creates a shallow copy of the input array and sorts it in-place.
+ *
+ * @param array Source array. May be NULL.
+ * @param key   Function used to extract integer keys.
+ * @return New sorted array, or NULL on allocation failure.
+ */
 Array *arrayCocktailShakerSorted(const Array *array, key_val_func key);
+
+/**
+ * @brief Returns a new array sorted using Gnome Sort.
+ *
+ * Creates a shallow copy of the input array and sorts it in-place.
+ *
+ * @param array Source array. May be NULL.
+ * @param key   Function used to extract integer keys.
+ * @return New sorted array, or NULL on allocation failure.
+ */
 Array *arrayGnomeSorted(const Array *array, key_val_func key);
+
 // AVG: O(n log n)
+/**
+ * @brief Returns a new array sorted using Merge Sort.
+ *
+ * Creates a shallow copy of the input array and sorts it in-place.
+ *
+ * @param array Source array. May be NULL.
+ * @param key   Function used to extract integer keys.
+ * @return New sorted array, or NULL on allocation failure.
+ */
 Array *arrayMergeSorted(const Array *array, key_val_func key);
+
+/**
+ * @brief Returns a new array sorted using Heap Sort.
+ *
+ * Creates a shallow copy of the input array and sorts it in-place.
+ *
+ * @param array Source array. May be NULL.
+ * @param key   Function used to extract integer keys.
+ * @return New sorted array, or NULL on allocation failure.
+ */
 Array *arrayHeapSorted(const Array *array, key_val_func key);
+
+/**
+ * @brief Returns a new array sorted using TimSort.
+ *
+ * Creates a shallow copy of the input array and sorts it in-place.
+ *
+ * @param array Source array. May be NULL.
+ * @param key   Function used to extract integer keys.
+ * @return New sorted array, or NULL on allocation failure.
+ */
 Array *arrayTimSorted(const Array *array, key_val_func key);
+
+/**
+ * @brief Returns a new array sorted using IntroSort.
+ *
+ * Creates a shallow copy of the input array and sorts it in-place.
+ *
+ * @param array Source array. May be NULL.
+ * @param key   Function used to extract integer keys.
+ * @return New sorted array, or NULL on allocation failure.
+ */
 Array *arrayIntroSorted(const Array *array, key_val_func key);
+
 // AVG: O(n log² n)
+/**
+ * @brief Returns a new array sorted using Shell Sort.
+ *
+ * Creates a shallow copy of the input array and sorts it in-place.
+ *
+ * @param array Source array. May be NULL.
+ * @param key   Function used to extract integer keys.
+ * @return New sorted array, or NULL on allocation failure.
+ */
 Array *arrayShellSorted(const Array *array, key_val_func key);
 // AVG: O(n log n) ; WORST O(n²)
+
+
+/**
+ * @brief Returns a new array sorted using Quick Sort.
+ *
+ * Creates a shallow copy of the input array and sorts it in-place.
+ *
+ * @param array Source array. May be NULL.
+ * @param key   Function used to extract integer keys.
+ * @return New sorted array, or NULL on allocation failure.
+ */
 Array *arrayQuickSorted(const Array *array, key_val_func key);
-
-
-
