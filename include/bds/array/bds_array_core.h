@@ -16,18 +16,26 @@ Array *arrayShallowCopy(const Array *array);
 void arrayFreeWith(Array *array, deleter_func deleter);  // Frees payloads according to func
 void arrayFree(Array *array);  // Just frees itself
 
+/// Helper
+static inline bool arrayExists(const Array *array) {
+    return !!array;
+}
+
 /// Info
+
 static inline size_t arrayLength(const Array *array) {
-    return array->length;
+    return arrayExists(array) ? array->length : 0;
 }
 
 static inline bool arrayIsEmpty(const Array *array) {
-    return array->length == 0;
+    return arrayExists(array) ? array->length == 0 : true;
 }
 
 /// Access (read-only to `void **data[i]`)
 static inline void *arrayGet(const Array *array, const size_t index) {
-    return array->data[index];
+    return (
+        arrayExists(array) && index < array->length
+        ) ? array->data[index] : NULL;
 }
 
 static inline void *arrayFirst(const Array *array) {
@@ -43,5 +51,6 @@ static inline void *arrayLast(const Array *array) {
 /// Change
 // sets array[index] = data
 static inline void arraySet(Array *array, const size_t index, void *data) {
+    if (!arrayExists(array) || index >= array->length) return;
     array->data[index] = data;
 }
