@@ -1,4 +1,4 @@
-# basic_data_structures
+# Basic Data Structures Implementations
 
 ## Purpose
 
@@ -12,14 +12,14 @@ Anyone is welcome to use this code, but please note that there are probably bett
 
 This repository includes implementations of the following basic data structures:
 
-- **Array** - Basic array operations
-- **Linked List** - Singly and doubly linked lists
-- **Stack** - LIFO (Last In First Out) data structure
-- **Queue** - FIFO (First In First Out) data structure
-- **Tree** - Binary trees, BST, etc.
-- **Hash Table** - Hash map implementations
-- **Graph** - Graph representations and algorithms
-- **Heap** - Min/max heap implementations
+- [X] **Array** - Basic array operations
+- [ ] **Linked List** - Singly and doubly linked lists
+- [ ] **Stack** - LIFO (Last In First Out) data structure
+- [ ] **Queue** - FIFO (First In First Out) data structure
+- [ ] **Tree** - Binary trees, BST, etc.
+- [ ] **Hash Table** - Hash map implementations
+- [ ] **Graph** - Graph representations and algorithms
+- [ ] **Heap** - Min/max heap implementations
 
 ## Note
 
