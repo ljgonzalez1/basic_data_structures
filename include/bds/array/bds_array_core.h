@@ -152,9 +152,7 @@ static inline bool arrayIsEmpty(const Array *array) {
  *         or the index is out of range.
  */
 static inline void *arrayGet(const Array *array, const size_t index) {
-    return (
-        arrayExists(array) && index < array->length
-        ) ? array->data[index] : NULL;
+    return index < arrayLength(array) ? array->data[index] : NULL;
 }
 
 /**
@@ -197,6 +195,6 @@ static inline void *arrayLast(const Array *array) {
  * @param data  Pointer to store at the given index.
  */
 static inline void arraySet(Array *array, const size_t index, void *data) {
-    if (!arrayExists(array) || index >= array->length) return;
+    if (!arrayExists(array) || index >= arrayLength(array)) return;
     array->data[index] = data;
 }
