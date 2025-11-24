@@ -1,3 +1,5 @@
+// Quick Sort O(n log n) on average, O(n²) worst case
+
 #include "../../../include/bds/array/bds_array_core.h"
 #include "../../../include/bds/array/bds_array_sort.h"
 
@@ -10,7 +12,7 @@ void arrayQuickSort(Array *array, const key_val_func key) {
     // TODO: ===================
 }
 
-Array *arrayQuickSorted(const Array *array, key_val_func key) {
+Array *arrayQuickSorted(const Array *array, const key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 
