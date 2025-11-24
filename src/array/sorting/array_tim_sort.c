@@ -253,7 +253,7 @@ static size_t timGallopLeft(
  */
 static size_t timGallopRight(
     const void *pivot_val,
-    const Array *array,
+    Array *array,
     const size_t right_base_idx,
     const size_t right_len,
     const key_val_func key
