@@ -11,22 +11,21 @@ void arrayInsertionSort(Array *array, const key_val_func key) {
 
     /*
     INSERTION-SORT(A, key)
+        n ← length(A)
+        if n < 2 then
+        return
 
-    n ← length(A)
-    if n < 2 then
-    return
+        for i ← 1 to n − 1 do
+        element ← A[i]
+        k ← key(element)
 
-    for i ← 1 to n − 1 do
-    element ← A[i]
-    k ← key(element)
+        j ← i
 
-    j ← i
+        while j > 0 and key(A[j − 1]) > k do
+        A[j] ← A[j − 1]     // shift right
+        j ← j − 1
 
-    while j > 0 and key(A[j − 1]) > k do
-    A[j] ← A[j − 1]     // shift right
-    j ← j − 1
-
-    A[j] ← element         // insert
+        A[j] ← element         // insert
     */
 
     /*    0    1    2    3    4    5    6    7    8    9   10
