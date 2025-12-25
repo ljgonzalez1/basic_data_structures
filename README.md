@@ -12,11 +12,21 @@ Anyone is welcome to use this code, but please note that there are probably bett
 
 This repository includes implementations of the following basic data structures:
 
-- [X] **Array** - Basic array operations
+- [X] **Array / vector** - Basic array operations
 - [ ] **Linked List** - Singly and doubly linked lists
-- [ ] **Stack** - LIFO (Last In First Out) data structure
-- [ ] **Queue** - FIFO (First In First Out) data structure
-- [ ] **Tree** - Binary trees, BST, etc.
+- [ ] **Stack (still list)** - LIFO (Last In First Out) data structure
+- [ ] **Queue (still list)** - FIFO (First In First Out) data structure
+- [ ] **Tree**
+    - [ ] **Basic Binary Search Tree** - BST
+    - [ ] **AVL Tree**
+    - [ ] **Red-Black Tree**
+    - [ ] **Splay Tree**
+    - [ ] **Treap**
+    - [ ] **Segment Tree**
+    - [ ] **Fenwick Tree (Binary Indexed Tree)** 
+    - [ ] **B-Tree**
+    - [ ] **K-D Tree**
+- [ ] **Set (Hash set)** - Set operations and implementations
 - [ ] **Hash Table** - Hash map implementations
 - [ ] **Graph** - Graph representations and algorithms
 - [ ] **Heap** - Min/max heap implementations

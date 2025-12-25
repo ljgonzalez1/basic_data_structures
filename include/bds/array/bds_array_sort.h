@@ -134,6 +134,8 @@ void arrayCocktailShakerSort(Array *array, key_val_func key);
  * @param key   Function used to extract an integer key from each element.
  */
 void arrayGnomeSort(Array *array, key_val_func key);
+
+
 //////////////////////////// AVG: O(n log n) ////////////////////////////
 
 /**
@@ -164,21 +166,7 @@ void arrayMergeSort(Array *array, key_val_func key);
 /**
  * @brief Sorts an Array in-place using Heap Sort.
  *
- * Builds a max-heap from the array and repeatedly extracts the maximum
- * element by swapping it to the end and heapifying the reduced heap.
- *
- * Time complexity:
- *  - O(n) to build the initial heap.
- *  - O(log n) per extraction, repeated n times → O(n log n).
- *  - Worst-case, best-case, and average-case are all O(n log n).
- *
- * Favorable conditions:
- *  - When worst-case guarantees are required.
- *  - Sorting large arrays where auxiliary memory must remain constant.
- *
- * Unfavorable conditions:
- *  - Inputs where stable sorting is required, as Heap Sort is unstable.
- *  - Workloads sensitive to cache behavior; heaps tend to cache-miss more.
+ * TODO: DOCUMENTAR
  *
  * @param array Pointer to the Array to sort. May be NULL.
  * @param key   Function used to extract an integer key.
