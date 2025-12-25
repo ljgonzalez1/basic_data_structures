@@ -31,6 +31,8 @@ void arraySelectionSort(Array *array, const key_val_func key) {
     // [  1,  1,  2,  5,  6,  6,  7,  9, 45, 45,*96]
     // [  1,  1,  2,  5,  6,  6,  7,  9, 45, 45, 96]
 
+    // T(n)= n * Σ_{i=0}^{n}{ n-i }
+
     // O[n * Σ_{i=0}^{n}{ n-i }]
     //  = O[n * Σ_{i=1}^{n}{ i }]
     //  = O[n²(n+1)/2] 
