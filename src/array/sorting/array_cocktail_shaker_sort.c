@@ -110,11 +110,29 @@ void arrayCocktailShakerSort(Array *array, const key_val_func key) {
          = 2 * ( n²/4 )
          = n²/2
 
-       O[n²/2]
-        = O[n²]
+       𝒪[T(n)]
+        = 𝒪[n²/2]
+        = 𝒪[n²]
     */
 
-    size_t length = arrayLength(array);
+    /* Additional Memory Analysis:
+       m(n) = c
+
+       𝒪[m(n)]
+        = 𝒪[1]
+    */
+
+    /* Total Memory Analysis:
+       M(n) = n + m(n)
+        = n + c
+
+       𝒪[M(n)]
+        = 𝒪[n + c]
+        = 𝒪[n]
+    */
+
+    const size_t length = arrayLength(array);
+
     if (length < 2) return;
 
     size_t start = 0;

@@ -187,18 +187,37 @@ void arrayHeapSort(
     */
 
     /* Time complexity analysis:
-         T_build(n) ≤ Σ_{h=0}^{⌊log2 n⌋} (n / 2^{h+1}) * O[h]
-                  = O[ n * Σ_{h=0}^{⌊log2 n⌋} (h / 2^{h+1}) ] ; Σ h/2^{h+1} ---> cte ≤ 1
-         T_build(n) = O[n]
+         T_build(n) ≤ Σ_{h=0}^{⌊log2 n⌋} (n / 2^{h+1}) * 𝒪[h]
+                  = 𝒪[ n * Σ_{h=0}^{⌊log2 n⌋} (h / 2^{h+1}) ] ; Σ h/2^{h+1} ---> cte ≤ 1
+         T_build(n) = 𝒪[n]
 
          T_extract(n) = Σ_{k=2}^{n} ( O[1] + O[log k] )
-                  = O[n] + O[ Σ_{k=2}^{n} log k ] ; Σ log k = log(n!) --> log(n!) ≤ n log n
-                  = O[n] + O[ n log n ]
-                  = O[ n log n ]
+                  = 𝒪[n] + O[ Σ_{k=2}^{n} log k ] ; Σ log k = log(n!) --> log(n!) ≤ n log n
+                  = 𝒪[n] + O[ n log n ]
+                  = 𝒪[ n log n ]
 
          T(n) = T_build(n) + T_extract(n)
-              = O[n] + O[ n log n ]
-              = O[n log n]
+              = 𝒪[n] + 𝒪[ n log n ]
+              = 𝒪[n log n]
+    */
+
+    /* Additional Memory Analysis:
+       m(n) = c
+
+       𝒪[m(n)]
+        = 𝒪[c]
+        = 𝒪[1]
+    */
+
+    /* Total Memory Analysis:
+       The input array storage already exists and holds n elements.
+
+       M(n) = n + m(n)
+            = n + c
+
+       𝒪[M(n)]
+        = 𝒪[n + c]
+        = 𝒪[n]
     */
 
     Array *array,

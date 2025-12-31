@@ -95,8 +95,26 @@ void arrayInsertionSort(Array *array, const key_val_func key) {
          = (n² - n)/2 + (n - 1)
          = n²/2 + n/2 - 1
 
-       O[n²/2 + n/2 - 1]
-        = O[n²]
+       𝒪[n²/2 + n/2 - 1]
+        = 𝒪[n²]
+    */
+
+    /* Additional Memory Analysis:
+       m(n) = sizeof(length) + sizeof(idx) + sizeof(to_insert_elem) + sizeof(key_to_insert) ...
+        = c
+
+       𝒪[m(n)]
+        = 𝒪[c]
+        = 𝒪[1]
+    */
+
+    /* Total Memory Analysis:
+       M(n) = n + m(n)
+            = n + c
+
+       𝒪[M(n)]
+        = 𝒪[n + c]
+        = 𝒪[n]
     */
 
     //   Subarray sorted at the left

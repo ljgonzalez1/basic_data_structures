@@ -89,12 +89,29 @@ void arrayBubbleSort(Array *array, const key_val_func key) {
     */
 
     /* Time Complexity Analysis:
-       T(n)= n * Σ_{i=0}^{n}{ n-i }
+       T(n) = Σ_{i=0}^{n}{ n-i }
+        = Σ_{i=1}^{n}{ i }
+        = (n²+1)/2
 
-       O[n * Σ_{i=0}^{n}{ n-i }]
-        = O[n * Σ_{i=1}^{n}{ i }]
-        = O[n²(n+1)/2]
-        = O[n²]
+       𝒪[T(n)]
+        = 𝒪[(n² + 1)/2]
+        = 𝒪[n²]
+    */
+
+    /* Additional Memory Analysis:
+       m(n) = c
+
+       𝒪[m(n)]
+        = 𝒪[1]
+    */
+
+    /* Total Memory Analysis:
+       M(n) = n + m(n)
+        = n + c
+
+       𝒪[M(n)]
+        = 𝒪[n + c]
+        = 𝒪[n]
     */
 
     size_t length = arrayLength(array);

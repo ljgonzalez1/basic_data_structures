@@ -130,10 +130,26 @@ void arrayGnomeSort(Array *array, const key_val_func key) {
             = (n-1)n / 2
             = (n² - n) / 2
 
-       O[ (n² - n) / 2 ]
-        = O[n²/2 - n/2]
-        = O[n²]
+       𝒪[ (n² - n) / 2 ]
+        = 𝒪[n²/2 - n/2]
+        = 𝒪[n²]
 
+    */
+
+    /* Additional Memory Analysis:
+       m(n) = c
+
+       𝒪[m(n)]
+        = 𝒪[1]
+    */
+
+    /* Total Memory Analysis:
+       M(n) = n + m(n)
+        = n + c
+
+       𝒪[M(n)]
+        = 𝒪[n + c]
+        = 𝒪[n]
     */
 
     const size_t length = arrayLength(array);
