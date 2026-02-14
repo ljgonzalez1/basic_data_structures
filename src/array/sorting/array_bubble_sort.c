@@ -1,4 +1,4 @@
-/// Bubble Sort O(n²)
+/// Bubble Sort O(n²) | LST+ARR
 
 #include "../../../include/bds/array/bds_array_sort.h"
 #include "../../../include/bds/array/bds_array_utils.h"

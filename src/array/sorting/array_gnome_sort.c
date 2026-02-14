@@ -1,4 +1,4 @@
-/// Gnome Sort O(n²)
+/// Gnome Sort O(n²) | LST+ARR
 
 #include "../../../include/bds/array/bds_array_sort.h"
 #include "../../../include/bds/array/bds_array_utils.h"

@@ -1,4 +1,4 @@
-/// Insertion Sort O(n²)
+/// Insertion Sort O(n²) | LST+ARR
 
 #include "../../../include/bds/array/bds_array_sort.h"
 

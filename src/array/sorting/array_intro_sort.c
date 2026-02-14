@@ -1,4 +1,4 @@
-/// Intro Sort O(n log n)
+/// Intro Sort O(n log n) | ARR
 
 #include "../../../include/bds/array/bds_array_utils.h"
 #include "../../../include/bds/array/bds_array_sort.h"

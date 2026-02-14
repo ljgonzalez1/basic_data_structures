@@ -1,4 +1,4 @@
-/// Shell Sort O(n log² n)
+/// Shell Sort O(n log² n) | ARR
 
 #include "../../../include/bds/array/bds_array_sort.h"
 

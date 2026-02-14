@@ -4,6 +4,9 @@
 
 /// Sorting (SAME sorted array)
 
+void arrayOddEvenSort(Array *array, key_val_func key);
+void arrayCombSorted(Array *array, key_val_func key);
+
 //////////////////////////// AVG: O(n²) ////////////////////////////
 void arrayBubbleSort(Array *array, key_val_func key);
 void arrayInsertionSort(Array *array, key_val_func key);
@@ -13,7 +16,6 @@ void arrayGnomeSort(Array *array, key_val_func key);
 
 //////////////////////////// AVG: O(n log n) ////////////////////////////
 void arrayMergeSort(Array *array, key_val_func key);
-void arrayHeapSort(Array *array, key_val_func key);
 void arrayTimSort(Array *array, key_val_func key);
 void arrayIntroSort(Array *array, key_val_func key);
 
@@ -24,6 +26,9 @@ void arrayShellSort(Array *array, key_val_func key);
 void arrayQuickSort(Array *array, key_val_func key);
 
 /// Sorting (returns NEW sorted array)
+
+Array *arrayCombSorted(const Array *array, key_val_func key);
+Array *arrayOddEvenSorted(const Array *array, key_val_func key);
 
 // AVG: O(n²)
 Array *arrayBubbleSorted (const Array *array, key_val_func key);

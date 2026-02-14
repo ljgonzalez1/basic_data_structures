@@ -1,4 +1,4 @@
-/// TimSort O(n log n)
+/// TimSort O(n log n) | ARR
 
 #include "../../../include/bds/array/bds_array_utils.h"
 #include "../../../include/bds/array/bds_array_sort.h"

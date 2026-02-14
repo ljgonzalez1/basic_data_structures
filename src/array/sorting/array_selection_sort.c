@@ -1,4 +1,4 @@
-/// Selection Sort O(n²)
+/// Selection Sort O(n²) | LST+ARR
 
 #include "../../../include/bds/array/bds_array_sort.h"
 #include "../../../include/bds/array/bds_array_utils.h"
@@ -59,9 +59,9 @@ void arraySelectionSort(Array *array, const key_val_func key) {
        = Σ_{k=2}^{n}{ k }
        = n(n+1)/2 − 1
 
-    O[T(n)]
-      = O[n(n+1)/2 − 1]
-      = O[n²]
+    𝒪[T(n)]
+      = 𝒪[n(n+1)/2 − 1]
+      = 𝒪[n²]
     */
 
     /* Additional Memory Analysis:
@@ -116,5 +116,4 @@ Array *arraySelectionSorted(const Array *array, const key_val_func key) {
 
     arraySelectionSort(sorted_array, key);
 
-    return sorted_array;
-}
+    return sorted_

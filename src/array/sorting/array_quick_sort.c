@@ -1,4 +1,4 @@
-/// Quick Sort O(n log n) on average, O(n²) worst case. M(log n)
+/// Quick Sort O(n log n) on average, O(n²) worst case. M(log n) | LST+ARR
 
 #include "../../../include/bds/array/bds_array_utils.h"
 #include "../../../include/bds/array/bds_array_sort.h"

@@ -1,4 +1,4 @@
-/// Merge Sort O(n log n)
+/// Merge Sort O(n log n) | LST+ARR
 
 #include "../../../include/bds/array/bds_array_sort.h"
 
