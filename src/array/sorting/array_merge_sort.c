@@ -80,6 +80,90 @@ static void mergeSortRecursive(
 }
 
 void arrayMergeSort(Array *array, const key_val_func key) {
+    /*
+    MERGE-SORT(A, key)
+        n ← length(A)
+        if n < 2 then
+            return
+
+        temp ← new array of size n          // auxiliary buffer
+        MERGE-SORT-REC(A, temp, 0, n, key)
+
+    MERGE-SORT-REC(A, temp, left, right, key)
+        // sorts subarray A[left..right)  (right is exclusive)
+        if right − left < 2 then
+            return                          // size 0 or 1 already sorted
+
+        mid ← left + ⌊(right − left)/2⌋     // divide
+        MERGE-SORT-REC(A, temp, left, mid,  key)
+        MERGE-SORT-REC(A, temp, mid,  right, key)
+
+        MERGE(A, temp, left, mid, right, key)
+
+    MERGE(A, temp, left, mid, right, key)
+        i ← left            // pointer into left half  [left, mid)
+        j ← mid             // pointer into right half [mid, right)
+        k ← left            // pointer into temp buffer starting at left
+
+        while i < mid and j < right do
+            if key(A[i]) ≤ key(A[j]) then
+                temp[k] ← A[i]
+                i ← i + 1
+            else
+                temp[k] ← A[j]
+                j ← j + 1
+            k ← k + 1
+
+        while i < mid do
+            temp[k] ← A[i]
+            i ← i + 1
+            k ← k + 1
+
+        while j < right do
+            temp[k] ← A[j]
+            j ← j + 1
+            k ← k + 1
+
+        for t ← left to right − 1 do
+            A[t] ← temp[t]                  // copy back
+    */
+
+
+    /* Time Complexity Analysis:
+       Let n = length(A).
+
+       Each recursive call splits the array roughly in half and then merges in linear time:
+         T(n) = 2T(n/2) + Θ(n)
+
+       By the Master Theorem (a=2, b=2, f(n)=Θ(n)):
+         T(n) = Θ(n log n)
+
+       𝒪[T(n)]
+        = 𝒪[n log n]
+
+       (Applies to best/average/worst case for standard merge sort.)
+    */
+
+    /* Additional Memory Analysis:
+       m(n) = n + log n
+
+       - temp buffer: Θ(n) pointers/elements (allocated once and reused).
+       - recursion stack: Θ(log n) depth.
+
+       𝒪[m(n)]
+        = 𝒪[n]
+    */
+
+    /* Total Memory Analysis:
+       M(n) = n + m(n)
+        = n + (n + log n)
+        = 2n + log n
+
+       𝒪[M(n)]
+        = 𝒪[2n + log n]
+        = 𝒪[n]
+    */
+
     const size_t length = arrayLength(array);
     if (length < 2) return;
 

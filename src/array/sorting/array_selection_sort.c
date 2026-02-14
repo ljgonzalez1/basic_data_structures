@@ -64,6 +64,26 @@ void arraySelectionSort(Array *array, const key_val_func key) {
       = O[n²]
     */
 
+    /* Additional Memory Analysis:
+       m(n) = c
+
+       Uses only a constant number of extra variables (indices, min value).
+
+       𝒪[m(n)]
+        = 𝒪[1]
+    */
+
+    /* Total Memory Analysis:
+       M(n) = n + m(n)
+        = n + c
+
+       𝒪[M(n)]
+        = 𝒪[n + c]
+        = 𝒪[n]
+    */
+
+
+
     const size_t length = arrayLength(array);
     if (length < 2) return;
 

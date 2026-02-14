@@ -4,7 +4,7 @@
 #include "../../../include/bds/array/bds_array_sort.h"
 
 /**
- * IntroSort = QuickSort + HeapSort + InsertionSort
+ * IntroSort ~= QuickSort + HeapSort + InsertionSort
  */
 
 #define INTRO_INSERTION_THRESHOLD 16
@@ -238,6 +238,182 @@ static void introSortRecursive(
 // ===============================================================
 
 void arrayIntroSort(
+    /*
+    INTRO-SORT(A, key)
+        n ← length(A)
+        if n < 2 then
+            return
+
+        depth_limit ← 2 * ⌊log2(n)⌋
+        INTRO-SORT-REC(A, 0, n, depth_limit, key)
+
+    INTRO-SORT-REC(A, lo, hi, depth_limit, key)
+        // sorts A[lo..hi) (hi is exclusive)
+        while (hi − lo) > INTRO_INSERTION_THRESHOLD do
+            if depth_limit = 0 then
+                HEAP-SORT-RANGE(A, lo, hi, key)     // safe fallback
+                return
+
+            depth_limit ← depth_limit − 1
+
+            p ← PARTITION-MEDIAN3(A, lo, hi, key)
+
+            // Tail recursion optimization:
+            // recurse into smaller side, iterate on larger side
+            if (p − lo) < (hi − (p + 1)) then
+                INTRO-SORT-REC(A, lo, p, depth_limit, key)
+                lo ← p + 1
+            else
+                INTRO-SORT-REC(A, p + 1, hi, depth_limit, key)
+                hi ← p
+
+        // small range → insertion sort
+        INSERTION-SORT-RANGE(A, lo, hi, key)
+
+    LOG2-SIZE(n)
+        // returns ⌊log2(n)⌋ for n ≥ 1
+        r ← 0
+        while n > 1 do
+            n ← ⌊n/2⌋
+            r ← r + 1
+        return r
+
+    INSERTION-SORT-RANGE(A, lo, hi, key)
+        for i ← lo + 1 to hi − 1 do
+            x ← A[i]
+            j ← i
+            while j > lo and key(A[j − 1]) > key(x) do
+                A[j] ← A[j − 1]
+                j ← j − 1
+            A[j] ← x
+
+    PARTITION-MEDIAN3(A, lo, hi, key)
+        mid ← lo + ⌊(hi − lo)/2⌋
+        last ← hi − 1
+
+        // median-of-three ordering of (lo, mid, last)
+        if key(A[mid]) < key(A[lo]) then swap(A[lo], A[mid])
+        if key(A[last]) < key(A[lo]) then swap(A[lo], A[last])
+        if key(A[last]) < key(A[mid]) then swap(A[mid], A[last])
+
+        // move pivot near end, then two-pointer partition
+        pivot_tmp ← last − 1
+        swap(A[mid], A[pivot_tmp])
+        pivot ← A[pivot_tmp]
+
+        i ← lo
+        j ← pivot_tmp
+
+        while true do
+            while i < pivot_tmp and key(A[i]) < key(pivot) do
+                i ← i + 1
+
+            while j > lo and key(A[j]) > key(pivot) do
+                j ← j − 1
+
+            if i ≥ j then
+                break
+
+            swap(A[i], A[j])
+            i ← i + 1
+            j ← j − 1
+
+        swap(A[i], A[pivot_tmp])     // pivot to final position
+        return i
+
+    HEAP-SORT-RANGE(A, lo, hi, key)
+        len ← hi − lo
+        if len < 2 then
+            return
+
+        // Build max-heap in [lo, hi)
+        for i ← lo + ⌊len/2⌋ − 1 downto lo do
+            HEAP-SIFT-DOWN(A, i, lo, hi, key)
+
+        // Extract max repeatedly
+        for end ← hi − 1 downto lo + 1 do
+            swap(A[lo], A[end])
+            HEAP-SIFT-DOWN(A, lo, lo, end, key)
+
+    HEAP-SIFT-DOWN(A, root, heap_lo, heap_hi, key)
+        while true do
+            left  ← heap_lo + 2*(root − heap_lo) + 1
+            right ← left + 1
+
+            if left ≥ heap_hi then
+                break
+
+            largest ← root
+            if key(A[left]) > key(A[largest]) then
+                largest ← left
+            if right < heap_hi and key(A[right]) > key(A[largest]) then
+                largest ← right
+
+            if largest = root then
+                break
+
+            swap(A[root], A[largest])
+            root ← largest
+    */
+
+    /* Time Complexity Analysis:
+       Let n = length(A).
+
+       IntroSort combines:
+         - QuickSort (fast average) with median-of-three pivots,
+         - a recursion depth limit (≈ 2*log2(n)),
+         - and HeapSort fallback to guarantee worst-case bounds,
+         - plus insertion sort for small partitions.
+
+       Average-case:
+         QuickSort dominates with good pivots:
+           T_avg(n) = Θ(n log n)
+
+         𝒪[T_avg(n)]
+          = 𝒪[n log n]
+
+       Worst-case:
+         Even if partitions are consistently bad, the depth limit forces a switch
+         to HeapSort on the problematic range, yielding:
+           T_worst(n) = O(n log n)
+
+         𝒪[T_worst(n)]
+          = 𝒪[n log n]
+
+       Best-case:
+         Balanced partitions + linear partition work per level:
+           T_best(n) = Θ(n log n)
+
+       The insertion-sort threshold improves constants (tiny ranges) but does not
+       change the asymptotic bounds.
+    */
+
+    /* Additional Memory Analysis:
+       m(n) = log n
+
+       - The algorithm is in-place for the array contents.
+       - It uses recursion for QuickSort partitions, but with:
+           * depth limit = O(log n)
+           * plus tail-recursion optimization (recurse on smaller side first)
+         therefore the maximum call stack depth remains O(log n).
+
+       HeapSort fallback is iterative over the range (no extra array).
+       Insertion sort uses constant locals.
+
+       𝒪[m(n)]
+        = 𝒪[log n]
+    */
+
+    /* Total Memory Analysis:
+       M(n) = n + m(n)
+        = n + log n
+
+       𝒪[M(n)]
+        = 𝒪[n + log n]
+        = 𝒪[n]
+    */
+
+
     Array *array,
     const key_val_func key
 ) {

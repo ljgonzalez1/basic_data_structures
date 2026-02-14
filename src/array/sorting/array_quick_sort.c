@@ -158,6 +158,118 @@ static void quickSortRecursive(
 /// ---------------------------------------------------------------
 
 void arrayQuickSort(
+    /*
+    QUICK-SORT(A, key)
+    n ← length(A)
+    if n < 2 then
+        return
+
+    QUICK-SORT-REC(A, 0, n, key)
+
+    QUICK-SORT-REC(A, lo, hi, key)
+    // sorts A[lo..hi) (hi is exclusive)
+    if hi − lo < 2 then
+        return
+
+    if hi − lo ≤ QUICK_INSERTION_THRESHOLD then
+        INSERTION-SORT-RANGE(A, lo, hi, key)
+        return
+
+    p ← PARTITION-MEDIAN3-LOMUTO(A, lo, hi, key)
+
+    if p > lo then
+        QUICK-SORT-REC(A, lo, p, key)         // left partition [lo, p)
+
+    if p + 1 < hi then
+        QUICK-SORT-REC(A, p + 1, hi, key)     // right partition (p, hi)
+
+    INSERTION-SORT-RANGE(A, lo, hi, key)
+    // stable insertion sort over A[lo..hi)
+    for i ← lo + 1 to hi − 1 do
+        x ← A[i]
+        j ← i
+
+        while j > lo and key(A[j − 1]) > key(x) do
+            A[j] ← A[j − 1]
+            j ← j − 1
+
+        A[j] ← x
+
+    PARTITION-MEDIAN3-LOMUTO(A, lo, hi, key)
+    // choose pivot by median-of-three: (lo, mid, hi-1)
+    mid ← lo + ⌊(hi − lo)/2⌋
+    last ← hi − 1
+
+    if key(A[mid]) < key(A[lo]) then swap(A[lo], A[mid])
+    if key(A[last]) < key(A[lo]) then swap(A[lo], A[last])
+    if key(A[last]) < key(A[mid]) then swap(A[mid], A[last])
+
+    // move chosen pivot to end (last) and run Lomuto on [lo, last)
+    swap(A[mid], A[last])
+    pivot ← A[last]
+
+    store ← lo
+
+    for i ← lo to last − 1 do
+        if key(A[i]) < key(pivot) then
+            swap(A[i], A[store])
+            store ← store + 1
+
+    swap(A[store], A[last])
+    return store
+    */
+
+    /* Time Complexity Analysis:
+       Let n = length(A).
+
+       Partition step:
+         PARTITION runs a single scan over the subarray ⇒ Θ(n) work per level.
+
+       Average-case (with good pivots; median-of-three reduces bad pivots):
+         Recurrence: T(n) = T(a n) + T((1-a) n) + Θ(n)
+         with a roughly near 1/2 on average ⇒ T(n) = Θ(n log n)
+
+         𝒪[T(n)] = 𝒪[n log n]
+
+       Best-case (perfectly balanced partitions every time):
+         T(n) = 2T(n/2) + Θ(n) = Θ(n log n)
+
+       Worst-case (highly unbalanced partitions, e.g. 0 and n-1 repeatedly):
+         T(n) = T(n − 1) + Θ(n) = Θ(n²)
+
+         𝒪[T(n)] = 𝒪[n²]
+
+       Note on the insertion-sort threshold:
+         For partitions of size ≤ 16, the algorithm switches to insertion sort.
+         This improves constants but does not change the asymptotic bounds.
+    */
+
+    /* Additional Memory Analysis:
+       m(n) = log n   (average / best)
+       m(n) = n       (worst)
+
+       The algorithm is in-place for the array contents, but it uses recursion:
+         - average/best recursion depth: Θ(log n)
+         - worst-case recursion depth: Θ(n)
+
+       𝒪[m(n)]
+        = 𝒪[log n]   average/best
+        = 𝒪[n]       worst
+    */
+
+    /* Total Memory Analysis:
+       M(n) = n + m(n)
+
+       Average / best:
+         M(n) = n + log n
+         𝒪[M(n)] = 𝒪[n]
+
+       Worst:
+         M(n) = n + n = 2n
+         𝒪[M(n)] = 𝒪[n]
+    */
+
+
     Array *array,
     const key_val_func key
 ) {

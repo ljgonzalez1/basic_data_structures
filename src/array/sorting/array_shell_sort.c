@@ -157,6 +157,52 @@ void arrayShellSort(
     [   1,   1,   2,   5,   6,   6,   7,   9,  45,  45,  96 ]  // sorted
     */
 
+    /* Time Complexity Analysis:
+       Let n = length(A).
+
+       Shell sort's time complexity depends on the chosen gap sequence.
+       Here:
+         - initial gap is Hibbard-like (2^k − 1),
+         - but the update rule is gap >>= 1 (halving), which is not the standard
+           Hibbard sequence (which would typically go ... 15, 7, 3, 1).
+
+       Per-gap work:
+         A gapped insertion sort pass is O(n²) in the worst case (like insertion sort)
+         but typically much less for large gaps because elements move closer to
+         their final positions.
+
+       Worst-case bound (generic safe bound):
+         T(n) = O(n²)
+
+       Practical/typical behavior:
+         Usually observed around O(n^(3/2)) to O(n^(4/3)) for common gap sequences,
+         but the exact asymptotic bound depends on the exact gap sequence used.
+
+       𝒪[T(n)]
+        = 𝒪[n²]
+    */
+
+
+    /* Additional Memory Analysis:
+       m(n) = c
+
+       Shell sort is in-place; gapped insertion uses only a constant number of
+       temporaries and indices.
+
+       𝒪[m(n)]
+        = 𝒪[1]
+    */
+
+    /* Total Memory Analysis:
+       M(n) = n + m(n)
+        = n + c
+
+       𝒪[M(n)]
+        = 𝒪[n + c]
+        = 𝒪[n]
+    */
+
+
 
     const size_t length = arrayLength(array);
     if (length < 2) return;
