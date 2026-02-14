@@ -209,7 +209,7 @@ void arrayCombSort(Array *array, const key_val_func key) {
     }
 }
 
-Array *arrayCombSorted(const Array *array, const key_val_func key) {
+Array *arrayCombSorted(const Array *array, key_val_func key) {
     Array *sorted_array = arrayShallowCopy(array);
     if (!sorted_array) return NULL;
 
