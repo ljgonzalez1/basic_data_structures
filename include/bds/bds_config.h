@@ -1,1 +1,3 @@
 #pragma once
+
+#define ARRAY_GEOMETRIC_EXPANTION_RATIO 0.25
