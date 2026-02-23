@@ -16,8 +16,7 @@ typedef struct bds_stack {
 
 //// Lifecycle ////
 
-Stack *stackNew(size_t length);
-Stack *stackShallowCopy(const Stack *stack);
+Stack *stackNew(void);
 void stackFreeWith(Stack *stack, deleter_func deleter);  // Frees payloads according to func
 void stackFree(Stack *stack);  // Just frees itself
 Stack *stackNewFromArray(const Array *array);  // Copies array data into stack; stack capacity >= array length
