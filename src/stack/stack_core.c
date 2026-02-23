@@ -47,7 +47,6 @@ Stack *stackNewFromArray(const Array *array) {  // Copies array data into stack;
         stackPush(new_stack, datapoint);
     }
 
-
 	return new_stack;
 }
 
