@@ -576,8 +576,8 @@ int main(void) {
         printf("All tests PASSED.\n");
         return EXIT_SUCCESS;
 
-    } else {
-        printf("Some tests FAILED.\n");
-        return EXIT_FAILURE;
     }
+
+    printf("Some tests FAILED.\n");
+    return EXIT_FAILURE;
 }
