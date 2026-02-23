@@ -472,7 +472,7 @@ static void test_one_sort_inplace(sort_inplace_func sorter) {
     }
 }
 
-static void test_one_sort_newarray(sort_newarray_func sorter) {
+static void test_one_sort_newarray(const sort_newarray_func sorter) {
     // 56 structs
     {
         Array *orig = build_struct_array_56();
@@ -507,7 +507,7 @@ static void test_one_sort_newarray(sort_newarray_func sorter) {
         }
     }
 
-    // 32 With repeated numbers
+    // 32 ints with most likely repeated numbers
     {
         Array *orig = build_int_array_32();
         TEST_ASSERT(orig != NULL);
