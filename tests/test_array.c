@@ -60,11 +60,11 @@ static int g_tests_failed = 0;
     } while (0)
 
 // ======================================================
-// Datos de prueba
+// Data test
 // ======================================================
 
 typedef struct DummyPayload {
-    int important_value;  // lo que usamos como key
+    int important_value;  // What we will use as key
     int dummy1;
     int dummy2;
 } DummyPayload;
@@ -78,7 +78,7 @@ static int          g_int_data_12[INT12_LEN];
 static int          g_int_data_32[INT32_LEN];
 
 static void init_test_data(void) {
-    // 56 structs con valores pseudo-aleatorios en important_value
+    // 56 structs with pseudo-random in important_value
     for (size_t i = 0; i < STRUCT_ARR_LEN; ++i) {
         const int base = (int)((i * 13u) % 101u);  // 0..100 pseudo-random
         g_struct_data_56[i].important_value = base - 50;  // -50..50
@@ -86,13 +86,13 @@ static void init_test_data(void) {
         g_struct_data_56[i].dummy2 = (int)(i * 2);
     }
 
-    // 12 ints, negativos y positivos
+    // 12 fixed ints, negative and positives
     for (size_t i = 0; i < INT12_LEN; ++i) {
         const int tmp12[INT12_LEN] = { -5, 3, 0, -2, 8, -1, 10, 7, -9, 4, -3, 2 };
         g_int_data_12[i] = tmp12[i];
     }
 
-    // 32 ints con valores repetidos
+    // 32 fixed ints with repeated values
     const int tmp32[INT32_LEN] = {
         1, 5, 3, 5, 2, 1, 4, 3,
         6, 2, 7, 5, 8, 3, 1, 6,
@@ -105,7 +105,7 @@ static void init_test_data(void) {
     }
 }
 
-// Construye arrays que apuntan a estos datos (no los liberan)
+// Build the arraws pointing to this data (they don't free them)
 static Array *build_struct_array_56(void) {
     Array *a = arrayNew(STRUCT_ARR_LEN);
 
@@ -181,7 +181,7 @@ static bool filter_struct_important_positive(const void *elem) {
     return p->important_value > 0;
 }
 
-// Para probar arrayFreeWith()
+// For testing arrayFreeWith()
 static unsigned int g_deleter_calls = 0;
 
 static void int_heap_deleter(void *elem) {
@@ -193,7 +193,7 @@ static void int_heap_deleter(void *elem) {
 }
 
 // ======================================================
-// Helpers de aserción
+// Assertion helpers
 // ======================================================
 
 static void assert_array_sorted_by_key(const Array *a, key_val_func key) {
@@ -208,7 +208,7 @@ static void assert_array_sorted_by_key(const Array *a, key_val_func key) {
 }
 
 // ======================================================
-// Tests básicos: lifecycle, acceso, copia
+// Basic tests: lifecycle, access, copy
 // ======================================================
 
 static void test_array_new_and_free(void) {
@@ -282,7 +282,7 @@ static void test_array_shallow_copy(void) {
 
     TEST_ASSERT_EQ_SIZE(arrayLength(a), arrayLength(b));
 
-    // Mismos punteros, distinto array
+    // Same pointers, different array
     for (size_t i = 0; i < 4; ++i) {
         TEST_ASSERT(arrayGet(a, i) == arrayGet(b, i));
     }
@@ -294,43 +294,43 @@ static void test_array_shallow_copy(void) {
 }
 
 // ======================================================
-// Tests de búsqueda y contadores
+// Find and count tests
 // ======================================================
 
 static void test_array_find_and_count(void) {
-    // ---- 12 ints (negativos + positivos) ----
+    // ---- 12 ints (negative + positive) ----
     Array *a12 = build_int_array_12();
 
     TEST_ASSERT(a12 != NULL);
 
     if (a12) {
-        // primer negativo: índice 0
+        // primer negative: index 0
         const size_t idx_neg = arrayIdxOf(a12, filter_int_is_negative);
         TEST_ASSERT_EQ_SIZE(0u, idx_neg);
 
-        // negativos totales: -5, -2, -1, -9, -3 → 5
-        unsigned int neg_count = arrayCount(a12, filter_int_is_negative);
+        // total negatives: -5, -2, -1, -9, -3 → 5
+        const unsigned int neg_count = arrayCount(a12, filter_int_is_negative);
         TEST_ASSERT_EQ_UINT(5u, neg_count);
 
-        // mínimo y máximo
-        const size_t min_idx = arrayMinIdx(a12, key_int);  // -9 en índice 8
-        const size_t max_idx = arrayMaxIdx(a12, key_int);  // 10 en índice 6
+        // minimum and maximum
+        const size_t min_idx = arrayMinIdx(a12, key_int);  // -9 in index 8
+        const size_t max_idx = arrayMaxIdx(a12, key_int);  // 10 in index 6
         TEST_ASSERT_EQ_SIZE(8u, min_idx);
         TEST_ASSERT_EQ_SIZE(6u, max_idx);
 
         arrayFree(a12);
     }
 
-    // ---- 32 ints con repetidos ----
+    // ---- 32 ints repeated ----
     Array *a32 = build_int_array_32();
     TEST_ASSERT(a32 != NULL);
 
     if (a32) {
-        // primer par: valor 2 en índice 4
+        // First pair: value 2 at index 4
         const size_t first_even_idx = arrayIdxOf(a32, filter_int_is_even);
         TEST_ASSERT_EQ_SIZE(4u, first_even_idx);
 
-        // número de pares (lo calculamos aquí mismo)
+        // Pair number (we calculate them here)
         unsigned int expected_even = 0;
 
         for (size_t i = 0; i < INT32_LEN; ++i) {
@@ -345,7 +345,7 @@ static void test_array_find_and_count(void) {
         arrayFree(a32);
     }
 
-    // ---- 56 structs con important_value ----
+    // ---- 56 structs with important_value ----
     Array *as = build_struct_array_56();
     TEST_ASSERT(as != NULL);
 
@@ -421,14 +421,14 @@ static void test_array_free_with_deleter(void) {
     arrayFreeWith(a, int_heap_deleter);
     TEST_ASSERT_EQ_UINT((unsigned int)n, g_deleter_calls);
 
-    // arrayFreeWith sobre NULL no debería llamar al deleter
+    // arrayFreeWith over NULL should not call the deleter
     g_deleter_calls = 0;
     arrayFreeWith(NULL, int_heap_deleter);
     TEST_ASSERT_EQ_UINT(0u, g_deleter_calls);
 }
 
 // ======================================================
-// Tests de sorting
+// Sorting tests
 // ======================================================
 
 typedef void (*sort_inplace_func)(Array *array, key_val_func key);
@@ -459,7 +459,7 @@ static void test_one_sort_inplace(sort_inplace_func sorter) {
         }
     }
 
-    // 32 ints con repetidos
+    // 32 ints with repeated numbers
     {
         Array *a = build_int_array_32();
         TEST_ASSERT(a != NULL);
