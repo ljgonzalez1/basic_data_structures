@@ -27,7 +27,6 @@ void arrayQuickSort(Array *array, key_val_func key);
 
 /// Sorting (returns NEW sorted array)
 
-Array *arrayCombSorted(const Array *array, key_val_func key);
 Array *arrayOddEvenSorted(const Array *array, key_val_func key);
 
 // AVG: O(n²)
@@ -39,7 +38,6 @@ Array *arrayGnomeSorted(const Array *array, key_val_func key);
 
 // AVG: O(n log n)
 Array *arrayMergeSorted(const Array *array, key_val_func key);
-Array *arrayHeapSorted(const Array *array, key_val_func key);
 Array *arrayTimSorted(const Array *array, key_val_func key);
 Array *arrayIntroSorted(const Array *array, key_val_func key);
 

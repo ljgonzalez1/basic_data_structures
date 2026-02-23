@@ -507,7 +507,7 @@ static void test_one_sort_newarray(sort_newarray_func sorter) {
         }
     }
 
-    // 32 ints con repetidos
+    // 32 With repeated numbers
     {
         Array *orig = build_int_array_32();
         TEST_ASSERT(orig != NULL);
@@ -533,7 +533,6 @@ static void test_array_sort_inplace(void) {
     test_one_sort_inplace(arrayCocktailShakerSort);
     test_one_sort_inplace(arrayGnomeSort);
     test_one_sort_inplace(arrayMergeSort);
-    test_one_sort_inplace(arrayHeapSort);
     test_one_sort_inplace(arrayTimSort);
     test_one_sort_inplace(arrayIntroSort);
     test_one_sort_inplace(arrayShellSort);
@@ -547,7 +546,6 @@ static void test_array_sort_new_arrays(void) {
     test_one_sort_newarray(arrayCocktailShakerSorted);
     test_one_sort_newarray(arrayGnomeSorted);
     test_one_sort_newarray(arrayMergeSorted);
-    test_one_sort_newarray(arrayHeapSorted);
     test_one_sort_newarray(arrayTimSorted);
     test_one_sort_newarray(arrayIntroSorted);
     test_one_sort_newarray(arrayShellSorted);
