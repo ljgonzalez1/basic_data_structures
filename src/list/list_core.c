@@ -125,10 +125,9 @@ bool listInsert(List *list, const size_t index, void *data) {
     if (!listExists(list) || index > listLength(list)) return false;
 
     ListNode *new_node = listNodeNew(data);
-    if (new_node != NULL) return false;
+    if (new_node == NULL) return false;
 
     if (index == 0) {
-        // FIXME: local variable pointer `ListNode *new_node` may be null
         new_node->next = list->head;
         list->head = new_node;
 
@@ -139,7 +138,6 @@ bool listInsert(List *list, const size_t index, void *data) {
         prev_node->next = new_node;
 
         if (listNodeExists(next_node)) {
-            // FIXME: local variable pointer `ListNode *new_node` may be null
             new_node->next = next_node;
         }
 
