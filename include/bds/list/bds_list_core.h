@@ -19,19 +19,26 @@ typedef struct bds_list {
 
 ListNode *listNodeNew(void *data);
 
-List *listNew();
-
-List *listShallowCopy(const List *list);
-
 void listNodeFreeWith(ListNode *node, deleter_func deleter);  // Frees payloads according to func
 
 void listNodeFree(ListNode *node);  // Just frees itself
+
+
+List *listNew(void);
 
 void listFreeWith(List *list, deleter_func deleter);  // Frees payloads according to func
 
 void listFree(List *list);  // Just frees itself
 
+
+List *listShallowCopy(const List *list);
+
+
 //// Helper ////
+
+static inline bool listNodeExists(const ListNode *node) {
+    return !!node;
+}
 
 static inline bool listExists(const List *list) {
     return !!list;
@@ -47,9 +54,26 @@ static inline bool listIsEmpty(const List *list) {
     return list->length == 0;
 }
 
+
+
 //// Access (read-only to `void **data[i]`) ////
 
+static inline void *listNodeGet(const ListNode *node) {
+    return listNodeExists(node) ? node->data : NULL;
+}
+
 void *listGet(const List *list, const size_t index);
+
+void *listGetFirst(const List *list);
+void *listGetLast(const List *list);
+
+//// Change ////
+
+bool listInsert(List *list, const size_t index, void *data);
+void *listPop(List *list, const size_t index);
+
+void listAppend(List *list, void *data);
+
 
 
 
