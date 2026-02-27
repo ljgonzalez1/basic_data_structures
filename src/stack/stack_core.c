@@ -21,7 +21,7 @@ Stack *stackNew(void) {
 }
 
 
-void stackFreeWith(Stack *stack, deleter_func deleter) {
+void stackFreeWith(Stack *stack, const deleter_func deleter) {
 	for (size_t i = 0; i < stackLength(stack); i++) {
         void *datapoint = stackGet(stack, i);
         deleter(datapoint);

@@ -59,7 +59,7 @@ static inline void *stackPeek(const Stack *stack) {
 
 static inline Stack *stackAutoExpand(Stack *stack) {
     if (!stackNeedsExpansion(stack)) return stack;
-    size_t new_cap = (size_t)((double)stack->max_length * (STACK_AUTO_EXPAND_FACTOR + 1.0)) + 1;
+    const size_t new_cap = (size_t)((double)stack->max_length * (ARRAY_GEOMETRIC_EXPANSION_RATIO + 1.0)) + 1;
     void **new_data = realloc(stack->data, sizeof(void *) * new_cap);
     return new_data ? (stack->data = new_data, stack->max_length = new_cap, stack) : stack;
 }
