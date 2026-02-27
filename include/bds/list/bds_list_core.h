@@ -71,8 +71,7 @@ void *listGetLast(const List *list);
 
 bool listInsert(List *list, const size_t index, void *data);
 void *listPop(List *list, const size_t index);
-
-void listAppend(List *list, void *data);
+bool listAppend(List *list, void *data);
 
 
 

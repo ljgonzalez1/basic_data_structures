@@ -165,9 +165,7 @@ void *listPop(List *list, const size_t index) {
     return popped_data;
 }
 
-
-void listAppend(List *list, void *data) {
-    if (!listExists(list)) return;
-
-    connst
+bool listAppend(List *list, void *data) {
+    if (!listExists(list)) return false;
+    return listInsert(list, listLength(list), data);
 }
