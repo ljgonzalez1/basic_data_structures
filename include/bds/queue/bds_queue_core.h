@@ -1,30 +1,25 @@
 #pragma once
 
-#include "../bds_config.h"
 #include "../bds_types.h"
-#include "../array/bds_array.h"
+#include "../list/bds_list.h"
 #include "../bds_utils.h"
 
 #include <stddef.h>   // size_t
 #include <stdbool.h>  // bool
 #include <stdlib.h>   // realloc
 
-typedef struct bds_stack {
-    void **data;
-    size_t max_length;
-    size_t top_idx;
-} Stack;
+typedef List Queue;
 
 //// Lifecycle ////
 
-Stack *stackNew(void);
-void stackFreeWith(Stack *stack, deleter_func deleter);  // Frees payloads according to func
-void stackFree(Stack *stack);  // Just frees itself
-Stack *stackNewFromArray(const Array *array);  // Copies array data into stack; stack capacity >= array length
+Queue *queueNew(void);
+void queueFreeWith(Queue *queue, deleter_func deleter);  // Frees payloads according to func
+void queueFree(Queue *queue);  // Just frees itself
+Queue *queueNewFromList(const List *list);
 
 //// Helper ////
 
-static inline bool stackExists(const Stack *stack) {
+static inline bool queueExists(const Queue *stack) {
     return this_struct_exists((void *)stack);
 }
 

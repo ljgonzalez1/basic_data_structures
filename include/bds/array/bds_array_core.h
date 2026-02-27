@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../bds_types.h"
+#include "../bds_utils.h"
 
 #include <stddef.h>   // size_t
 #include <stdbool.h>  // bool
@@ -23,7 +24,7 @@ void arrayFree(Array *array);  // Just frees itself
 //// Helper ////
 
 static inline bool arrayExists(const Array *array) {
-    return !!array;
+    return this_struct_exists((void *)array);
 }
 
 //// Info ////
