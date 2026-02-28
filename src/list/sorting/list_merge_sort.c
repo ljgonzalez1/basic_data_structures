@@ -71,7 +71,7 @@ static List *listSplitHalves(const List *list, List **out_right) {
     return left;
 }
 
-List *listMergeSort(const List *list, const key_val_func key) {
+List *listMergeSorted(const List *list, const key_val_func key) {
     // Divide and conquer: recursively split the list in half,
     // sort each half, then merge the two sorted halves.
     // Stable sort — equal elements preserve their original order.
@@ -169,8 +169,8 @@ List *listMergeSort(const List *list, const key_val_func key) {
         return NULL;
     }
 
-    List *sorted_left  = listMergeSort(left,  key);
-    List *sorted_right = listMergeSort(right, key);
+    List *sorted_left  = listMergeSorted(left,  key);
+    List *sorted_right = listMergeSorted(right, key);
 
     listFree(left);
     listFree(right);
