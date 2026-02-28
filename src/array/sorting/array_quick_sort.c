@@ -249,7 +249,7 @@ void arrayQuickSort(
        m(n) = n       (worst)
 
        The algorithm is in-place for the array contents, but it uses recursion:
-         - average/best recursion depth: Θ(log n)
+         - average / best of recursion depth: Θ(log n)
          - worst-case recursion depth: Θ(n)
 
        𝒪[m(n)]
