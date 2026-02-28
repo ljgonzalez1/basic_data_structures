@@ -3,6 +3,7 @@
 #include "../bds_config.h"
 #include "../bds_types.h"
 #include "../array/bds_array.h"
+#include "../bds_utils.h"
 
 #include <stddef.h>   // size_t
 #include <stdbool.h>  // bool
@@ -24,7 +25,7 @@ Stack *stackNewFromArray(const Array *array);  // Copies array data into stack; 
 //// Helper ////
 
 static inline bool stackExists(const Stack *stack) {
-    return !!stack;
+    return this_struct_exists((void *)stack);
 }
 
 static inline bool stackNeedsExpansion(const Stack *stack) {
