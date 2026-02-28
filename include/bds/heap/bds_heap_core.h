@@ -2,6 +2,7 @@
 
 #include "../bds_types.h"
 #include "../array/bds_array.h"
+#include "../bds_utils.h"
 
 #include <stddef.h>   // size_t
 #include <stdbool.h>  // bool
@@ -29,7 +30,7 @@ void heapFree(Heap *heap);  // Just frees itself
 
 /// Helper
 static inline bool heapExists(const Heap *heap) {
-    return !!heap;
+    return this_struct_exists((void *)heap);
 }
 
 /// Info

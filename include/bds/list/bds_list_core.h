@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../bds_types.h"
+#include "../bds_utils.h"
 
 #include <stddef.h>   // size_t
 #include <stdbool.h>  // bool
@@ -37,11 +38,11 @@ List *listShallowCopy(const List *list);
 //// Helper ////
 
 static inline bool listNodeExists(const ListNode *node) {
-    return !!node;
+    return this_struct_exists((void *)node);
 }
 
 static inline bool listExists(const List *list) {
-    return !!list;
+    return this_struct_exists((void *)list);
 }
 
 //// Info ////
