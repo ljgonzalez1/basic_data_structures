@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 
-size_t arrayIdxOf(const Array *array, filter_func key) {
+size_t arrayIdxOf(const Array *array, const filter_func key) {
     for (size_t curr = 0; curr < arrayLength(array); curr++) {
         const void *datapoint = arrayGet(array, curr);
 
