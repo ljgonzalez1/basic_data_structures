@@ -1,5 +1,4 @@
-#include "../include/bds/bds_core.h"
-#include "../include/bds/array/bds_array.h"
+#include "../include/bds/bds.h"
 
 #include <stdio.h>
 

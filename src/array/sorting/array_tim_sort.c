@@ -1,4 +1,4 @@
-/// TimSort O(n log n)
+/// TimSort O(n log n) | ARR
 
 #include "../../../include/bds/array/bds_array_utils.h"
 #include "../../../include/bds/array/bds_array_sort.h"
@@ -491,6 +491,175 @@ static void timMergeForceCollapse(
 /// ===============================================================
 
 void arrayTimSort(
+    /*
+    TIMSORT(A, key)
+        n ← length(A)
+        if n < 2 then
+            return
+
+        minrun ← MINRUN(n)
+        stack ← empty stack of runs   // each run = (start, len)
+
+        i ← 0
+        remaining ← n
+
+        while remaining > 0 do
+            // 1) Detect a natural run (ascending or descending) starting at i
+            run_len ← COUNT-RUN-AND-MAKE-ASCENDING(A, i, n, key)
+
+            // 2) If run too small, extend to minrun with insertion sort
+            if run_len < minrun then
+                target ← min(minrun, remaining)
+                INSERTION-SORT-RANGE(A, i, i + target, key)     // stable
+                run_len ← target
+
+            // 3) Push run on stack
+            PUSH(stack, (i, run_len))
+
+            // 4) Merge-collapse while invariants are violated
+            MERGE-COLLAPSE(A, stack, key)
+
+            i ← i + run_len
+            remaining ← remaining − run_len
+
+        // 5) Merge everything left on the stack
+        MERGE-FORCE-COLLAPSE(A, stack, key)
+
+
+    MINRUN(n)
+        // compute TimSort minrun (typically in [32, 64] for large n)
+        r ← 0
+        while n ≥ 64 do
+            r ← r OR (n AND 1)
+            n ← ⌊n/2⌋
+        return n + r
+
+
+    COUNT-RUN-AND-MAKE-ASCENDING(A, start, n, key)
+        if start ≥ n − 1 then
+            return 1
+
+        end ← start + 1
+
+        if key(A[end]) < key(A[start]) then
+            // descending
+            while end + 1 < n and key(A[end + 1]) < key(A[end]) do
+                end ← end + 1
+            REVERSE(A, start, end + 1)              // normalize to ascending
+        else
+            // ascending
+            while end + 1 < n and key(A[end + 1]) ≥ key(A[end]) do
+                end ← end + 1
+
+        return (end − start + 1)
+
+
+    MERGE-COLLAPSE(A, stack, key)
+        // simplified TimSort invariants (as implemented):
+        // Let top runs be ... A, B, C (A below B below C):
+        //   |A| > |B| + |C|
+        //   |B| > |C|
+        // If violated, merge a pair that keeps sizes balanced.
+        while size(stack) > 1 do
+            if size(stack) ≥ 3 then
+                lenA ← stack[n−3].len
+                lenB ← stack[n−2].len
+                lenC ← stack[n−1].len
+
+                if (lenA ≤ lenB + lenC) OR (lenB ≤ lenC) then
+                    if lenA < lenC then
+                        MERGE-AT(A, base=stack[n−2].start, left=lenB, right=lenC, key)  // merge B+C
+                        REPLACE stack[n−2] with merged run; POP stack[n−1]
+                    else
+                        MERGE-AT(A, base=stack[n−3].start, left=lenA, right=lenB, key)  // merge A+B
+                        REPLACE stack[n−3] with merged run; SHIFT stack[n−2] ← stack[n−1]; POP stack[n−1]
+                else
+                    break
+            else
+                // only 2 runs: enforce len_left > len_right, else merge
+                lenL ← stack[0].len
+                lenR ← stack[1].len
+                if lenL ≤ lenR then
+                    MERGE-AT(A, base=stack[0].start, left=lenL, right=lenR, key)
+                    REPLACE stack[0] with merged run; POP stack[1]
+                else
+                    break
+
+
+    MERGE-FORCE-COLLAPSE(A, stack, key)
+        while size(stack) > 1 do
+            // merge adjacent runs until one remains (choosing to balance sizes)
+            choose adjacent pair (per implementation) and MERGE-AT(...)
+
+
+    MERGE-AT(A, base, left_len, right_len, key)
+        // left run:  [base, base + left_len)
+        // right run: [base + left_len, base + left_len + right_len)
+        // stable merge using a buffer for the left run and "galloping" block copies:
+        //   - allocate left_buf[left_len]
+        //   - standard merge
+        //   - when one side wins repeatedly, gallop (exponential + binary search)
+        //     to copy a whole block at once
+        //   - write back into A[base..base+left_len+right_len)
+    */
+
+    /* Time Complexity Analysis:
+       Let n = length(A).
+
+       TimSort is adaptive:
+         - Detecting runs is linear: Θ(n) comparisons in total across the scan.
+         - Extending short runs uses insertion sort on small ranges (≤ minrun),
+           which keeps overhead bounded and helps on partially-sorted data.
+         - Merging runs dominates, like merge sort.
+
+       Worst-case:
+         Merging adjacent runs over the whole array yields:
+           T_worst(n) = O(n log n)
+
+       Average-case:
+           T_avg(n) = O(n log n)
+
+       Best-case (already sorted / long natural runs):
+         Run detection finds one (or few) long ascending runs and merge work is minimal:
+           T_best(n) = Θ(n)
+
+       Galloping mode:
+         Improves constant factors during merge when one run “wins” repeatedly,
+         but does not change the asymptotic bounds.
+
+       𝒪[T(n)]
+        = 𝒪[n log n]   (worst/average)
+        = 𝒪[n]         (best)
+    */
+
+    /* Additional Memory Analysis:
+       m(n) = n
+
+       Peak auxiliary memory is dominated by merge buffering:
+         - MERGE-AT allocates a temporary buffer for the left run:
+             left_buf[left_len]  (pointers)
+           In the worst case, left_len can be Θ(n), so peak extra memory is Θ(n).
+
+       Other memory:
+         - run_stack is a fixed-size array (TIM_STACK_MAX) ⇒ Θ(1)
+         - No recursion (iterative collapse), so call stack overhead is Θ(1)
+
+       𝒪[m(n)]
+        = 𝒪[n]
+    */
+
+    /* Total Memory Analysis:
+       M(n) = n + m(n)
+        = n + n
+        = 2n
+
+       𝒪[M(n)]
+        = 𝒪[2n]
+        = 𝒪[n]
+    */
+
+
+
     Array *array,
     const key_val_func key
 ) {

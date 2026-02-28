@@ -1,0 +1,78 @@
+#pragma once
+
+#include "../bds_types.h"
+#include "../bds_utils.h"
+
+#include <stddef.h>   // size_t
+#include <stdbool.h>  // bool
+
+typedef struct bds_list_node {
+    void *data;
+    struct bds_list_node *next;
+} ListNode;
+
+typedef struct bds_list {
+    ListNode *head;
+    size_t length;
+} List;
+
+//// Lifecycle ////
+
+ListNode *listNodeNew(void *data);
+
+void listNodeFreeWith(ListNode *node, deleter_func deleter);  // Frees payloads according to func
+
+void listNodeFree(ListNode *node);  // Just frees itself
+
+
+List *listNew(void);
+
+void listFreeWith(List *list, deleter_func deleter);  // Frees payloads according to func
+
+void listFree(List *list);  // Just frees itself
+
+
+List *listShallowCopy(const List *list);
+
+
+//// Helper ////
+
+static inline bool listNodeExists(const ListNode *node) {
+    return this_struct_exists((void *)node);
+}
+
+static inline bool listExists(const List *list) {
+    return this_struct_exists((void *)list);
+}
+
+//// Info ////
+
+static inline size_t listLength(const List *list) {
+    return listExists(list) ? list->length : 0;
+}
+
+static inline bool listIsEmpty(const List *list) {
+    return list->length == 0;
+}
+
+
+
+//// Access (read-only to `void **data[i]`) ////
+
+static inline void *listNodeGet(const ListNode *node) {
+    return listNodeExists(node) ? node->data : NULL;
+}
+
+void *listGet(const List *list, size_t index);
+
+void *listGetFirst(const List *list);
+void *listGetLast(const List *list);
+
+//// Change ////
+
+bool listInsert(List *list, size_t index, void *data);
+void *listPop(List *list, size_t index);
+bool listAppend(List *list, void *data);
+
+
+

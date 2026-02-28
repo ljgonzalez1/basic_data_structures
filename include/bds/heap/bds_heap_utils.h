@@ -2,18 +2,15 @@
 
 #include "bds_heap_core.h"
 
-static inline void heapSwap(Heap *heap, const size_t idx1, const size_t idx2) {
-    if (idx1 == idx2) return;
+static inline int heapKeyCompare(
+    const void *datapoint_1,
+    const void *datapoint_2,
+    const key_val_func key
+) {
+    const int key_1 = key(datapoint_1);
+    const int key_2 = key(datapoint_2);
 
-    void *temp = heapGet(heap, idx1);
-    heapSet(heap, idx1, heapGet(heap, idx2));
-    heapSet(heap, idx2, temp);
-}
-
-static inline void minHeapSwap(MinHeap *heap, const size_t idx1, const size_t idx2) {
-    heapSwap((Heap *)heap, idx1, idx2);
-}
-
-static inline void maxHeapSwap(MaxHeap *heap, const size_t idx1, const size_t idx2) {
-    heapSwap((Heap *)heap, idx1, idx2);
+    if (key_1 < key_2) return -1;
+    if (key_1 > key_2) return 1;
+    return 0;
 }
