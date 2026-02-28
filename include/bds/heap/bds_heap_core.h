@@ -31,43 +31,43 @@ void maxHeapFree(MaxHeap *max_heap);
 
 /// Helper
 
-static inline bool __heapExists(const Heap *heap) {
+static inline bool _heapExists(const Heap *heap) {
     return this_struct_exists((void *)heap);
 }
 
 static inline bool minHeapExists(const MinHeap *min_heap) {
-    return __heapExists((const Heap *)min_heap);
+    return _heapExists((const Heap *)min_heap);
 }
 
 static inline bool maxHeapExists(const MinHeap *max_heap) {
-    return __heapExists((const Heap *)max_heap);
+    return _heapExists((const Heap *)max_heap);
 }
 
 /// Info
 
-static inline size_t __heapLength(const Heap *heap) {
-    return __heapExists(heap) ? heap->length : 0;
+static inline size_t _heapLength(const Heap *heap) {
+    return _heapExists(heap) ? heap->length : 0;
 }
 
 static inline size_t minHeapLength(MinHeap *min_heap) {
-    return __heapLength((const Heap *)min_heap);
+    return _heapLength((const Heap *)min_heap);
 }
 
 static inline size_t maxHeapLength(MaxHeap *max_heap) {
-    return __heapLength((const Heap *)max_heap);
+    return _heapLength((const Heap *)max_heap);
 }
 
 
-static inline bool __heapIsEmpty(const Heap *heap) {
-    return __heapExists(heap) ? heap->length == 0 : true;
+static inline bool _heapIsEmpty(const Heap *heap) {
+    return _heapExists(heap) ? heap->length == 0 : true;
 }
 
 static inline bool minHeapIsEmpty(MinHeap *min_heap) {
-    return __heapIsEmpty((const Heap *)min_heap);
+    return _heapIsEmpty((const Heap *)min_heap);
 }
 
 static inline bool maxHeapIsEmpty(MaxHeap *max_heap) {
-    return __heapIsEmpty((const Heap *)max_heap);
+    return _heapIsEmpty((const Heap *)max_heap);
 }
 
 /// Access

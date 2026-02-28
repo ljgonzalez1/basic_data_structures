@@ -93,7 +93,7 @@ List *listShallowCopy(const List *list) {
     return new_list;
 }
 
-static ListNode *__list_get_node(const List* list, size_t index) {
+static ListNode *_list_get_node(const List* list, size_t index) {
     if (!listExists(list) || listIsEmpty(list)) return NULL;
 
     const ListNode *current_node = list->head;
@@ -110,7 +110,7 @@ static ListNode *__list_get_node(const List* list, size_t index) {
 
 void *listGet(const List *list, const size_t index) {
     if (!listExists(list) || listIsEmpty(list) || index >= listLength(list)) return NULL;
-    return listNodeGet(__list_get_node(list, index));
+    return listNodeGet(_list_get_node(list, index));
 }
 
 void *listGetFirst(const List *list) {
@@ -118,7 +118,7 @@ void *listGetFirst(const List *list) {
 }
 
 void *listGetLast(const List *list) {
-    return listNodeGet(__list_get_node(list, listLength(list) - 1));
+    return listNodeGet(_list_get_node(list, listLength(list) - 1));
 }
 
 bool listInsert(List *list, const size_t index, void *data) {
@@ -132,7 +132,7 @@ bool listInsert(List *list, const size_t index, void *data) {
         list->head = new_node;
 
     } else {
-        ListNode *prev_node = __list_get_node(list, index - 1);
+        ListNode *prev_node = _list_get_node(list, index - 1);
         ListNode *next_node = prev_node->next;
 
         prev_node->next = new_node;
@@ -150,13 +150,13 @@ bool listInsert(List *list, const size_t index, void *data) {
 void *listPop(List *list, const size_t index) {
     if (!listExists(list) || listIsEmpty(list) || index >= listLength(list)) return NULL;
 
-    ListNode *popped_node = __list_get_node(list, index);;
+    ListNode *popped_node = _list_get_node(list, index);;
 
     if (index == 0) {
         list->head = popped_node->next;
 
     } else {
-        ListNode *prev_node = __list_get_node(list, index - 1);
+        ListNode *prev_node = _list_get_node(list, index - 1);
         prev_node->next = popped_node->next;
     }
 
