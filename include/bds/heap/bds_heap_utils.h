@@ -14,3 +14,23 @@ static inline int heapKeyCompare(
     if (key_1 > key_2) return 1;
     return 0;
 }
+
+static inline size_t heapParentIdx(const size_t idx) {
+    return (idx - 1) / 2;
+}
+
+static inline size_t heapLeftChildIdx(const size_t idx) {
+    return 2 * idx + 1;
+}
+
+static inline size_t heapRightChildIdx(const size_t idx) {
+    return 2 * idx + 2;
+}
+
+static inline void heapSwap(Heap *heap, const size_t idx1, const size_t idx2) {
+    if (idx1 == idx2) return;
+
+    void *temp = heap->data[idx1];
+    heap->data[idx1] = heap->data[idx2];
+    heap->data[idx2] = temp;
+}

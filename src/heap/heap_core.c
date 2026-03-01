@@ -102,7 +102,6 @@ void *minHeapGetMax(const MinHeap *min_heap) {
     return _heapGetExtremum(min_heap);
 }
 
-/// ///
 
 
 
