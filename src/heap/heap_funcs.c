@@ -8,7 +8,7 @@ static void _heapShiftUp(Heap *heap, const size_t idx, const key_val_func key) {
 }
 
 static void _heapShiftDown(Heap *heap, const size_t idx, const key_val_func key) {
-    // TODO:
+
 }
 
 /// ///
@@ -52,7 +52,7 @@ static Heap *_heapTailToHead(Heap *heap) {
     heap->data[heap->length] = NULL;
 
     void **reallocated_heap_data_array = realloc(heap->data, heap->length * sizeof *heap->data);
-    // NOTE: IT SHOULD BE FINE ANYWAYS. IT'LL JUST GROW A BIT
+    // NOTE: IT SHOULD BE FINE ANYWAY. IT'LL JUST GROW A BIT
     if (reallocated_heap_data_array) heap->data = reallocated_heap_data_array;
 
     return heap;
