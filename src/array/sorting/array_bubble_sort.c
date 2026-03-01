@@ -23,7 +23,7 @@ void arrayBubbleSort(Array *array, const key_val_func key) {
         until swapped = false
     */
 
-    // Swaps with neighbour if lower.
+    // Swaps with neighbor if lower.
     // Repeats n times or until no swaps are made.
     // It pushes highest values to the end of the array.
 

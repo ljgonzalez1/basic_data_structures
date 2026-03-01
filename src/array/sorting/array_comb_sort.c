@@ -181,14 +181,15 @@ void arrayCombSort(Array *array, const key_val_func key) {
     const size_t length = arrayLength(array);
     if (length < 2) return;
 
-    // Shrink factor of 1.3 has been empirically found to be optimal
-    const double shrink_factor = 1.3;
     size_t gap = length;
     bool swapped = true;
 
     while (gap > 1 || swapped) {
+        // Shrink factor of 1.3 has been empirically found to be optimal
+        const double shrink_factor = 1.3;
+
         // Update gap for next comb
-        gap = (size_t)(gap / shrink_factor);
+        gap = (size_t)((double)gap / shrink_factor);
         if (gap < 1) gap = 1;
 
         swapped = false;

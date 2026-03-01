@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../bds_types.h"
-#include "../array/bds_array.h"
 #include "../bds_utils.h"
 
 #include <stddef.h>   // size_t
@@ -21,137 +20,76 @@ typedef Heap MaxHeap;
 MinHeap *minHeapNew(size_t length);
 MaxHeap *maxHeapNew(size_t length);
 
-// Cast to Heap and Min/Max Heap before and after copy
-// MinHeap min_heap_copy = (MinHeap *)heapShallowCopy((Heap *)min_heap);
-Heap *heapShallowCopy(const Heap *heap);
+MinHeap *minHeapShallowCopy(const MinHeap *min_heap);
+MaxHeap *maxHeapShallowCopy(const MaxHeap *max_heap);
 
-void heapFreeWith(Heap *heap, deleter_func deleter);  // Frees payloads according to func
-void heapFree(Heap *heap);  // Just frees itself
+void minHeapFreeWith(MinHeap *min_heap, deleter_func deleter);  // Frees payloads according to func
+void maxHeapFreeWith(MaxHeap *max_heap, deleter_func deleter);  // Frees payloads according to func
+
+void minHeapFree(MinHeap *min_heap);
+void maxHeapFree(MaxHeap *max_heap);
 
 /// Helper
-static inline bool heapExists(const Heap *heap) {
+
+static inline bool _heapExists(const Heap *heap) {
     return this_struct_exists((void *)heap);
 }
 
-/// Info
-static inline size_t heapLength(const Heap *heap) {
-    return heapExists(heap) ? heap->length : 0;
+static inline bool minHeapExists(const MinHeap *min_heap) {
+    return _heapExists((const Heap *)min_heap);
 }
 
-static inline bool heapIsEmpty(const Heap *heap) {
-    return heapExists(heap) ? heap->length == 0 : true;
+static inline bool maxHeapExists(const MinHeap *max_heap) {
+    return _heapExists((const Heap *)max_heap);
+}
+
+/// Info
+
+static inline size_t _heapLength(const Heap *heap) {
+    return _heapExists(heap) ? heap->length : 0;
+}
+
+static inline size_t minHeapLength(MinHeap *min_heap) {
+    return _heapLength((const Heap *)min_heap);
+}
+
+static inline size_t maxHeapLength(MaxHeap *max_heap) {
+    return _heapLength((const Heap *)max_heap);
+}
+
+
+static inline bool _heapIsEmpty(const Heap *heap) {
+    return _heapExists(heap) ? heap->length == 0 : true;
+}
+
+static inline bool minHeapIsEmpty(MinHeap *min_heap) {
+    return _heapIsEmpty((const Heap *)min_heap);
+}
+
+static inline bool maxHeapIsEmpty(MaxHeap *max_heap) {
+    return _heapIsEmpty((const Heap *)max_heap);
 }
 
 /// Access
-static inline void *heapGet(const Heap *heap, const size_t index) {
-    return index < heapLength(heap) ? heap->data[index] : NULL;
-}
+
+void *minHeapGetMin(const MinHeap *min_heap);
+void *maxHeapGetMax(const MaxHeap *max_heap);
+
 
 /// Change
-// sets heap[index] = data
-static inline void heapSet(Heap *heap, const size_t index, void *data) {
-    if (!heapExists(heap) || index >= heapLength(heap)) return;
-    heap->data[index] = data;
-}
 
-/// Dependent functions (for consistency with other types)
+void minHeapHeapify(MinHeap *min_heap, key_val_func key);
+void maxHeapHeapify(MaxHeap *max_heap, key_val_func key);
 
-/// Helpers
-static inline bool maxHeapExists(const MaxHeap *max_heap) {
-    return heapExists((const Heap *)max_heap);
-}
+void minHeapShiftUp(MinHeap *min_heap, size_t index, key_val_func key);
+void maxHeapShiftUp(MaxHeap *max_heap, size_t index, key_val_func key);
 
-static inline bool minHeapExists(const MinHeap *min_heap) {
-    return heapExists((const Heap *)min_heap);
-}
-
-/// Lifecycle
-
-static inline MinHeap *minHeapShallowCopyConst(const MinHeap *min_heap) {
-    return (MinHeap *)heapShallowCopy((const Heap *)min_heap);
-}
-
-static inline MaxHeap *maxHeapShallowCopyConst(const MaxHeap *max_heap) {
-    return (MaxHeap *)heapShallowCopy((const Heap *)max_heap);
-}
-
-static inline void minHeapFreeWith(MinHeap *min_heap, const deleter_func deleter) {
-    heapFreeWith((Heap *)min_heap, deleter);
-}
-
-static inline void maxHeapFreeWith(MaxHeap *max_heap, const deleter_func deleter) {
-    heapFreeWith((Heap *)max_heap, deleter);
-}
-
-static inline void minHeapFree(MinHeap *min_heap) {
-    heapFree((Heap *)min_heap);
-}
-
-static inline void maxHeapFree(MaxHeap *max_heap) {
-    heapFree((Heap *)max_heap);
-}
-
-/// Info
-static inline size_t minHeapLength(const MinHeap *heap) {
-    return heapLength((Heap *)heap);
-}
-
-static inline size_t maxHeapLength(const MaxHeap *heap) {
-    return heapLength((Heap *)heap);
-}
-
-static inline bool minHeapIsEmpty(const MinHeap *heap) {
-    return heapIsEmpty((const Heap *)heap);
-}
-
-static inline bool maxHeapIsEmpty(const MaxHeap *heap) {
-    return heapIsEmpty((const Heap *)heap);
-}
-
-/// Access (read-only to `void **data[i]`)
-static inline void *minHeapGet(const MinHeap *heap, const size_t index) {
-    return heapGet((Heap *)heap, index);
-}
-
-static inline void *maxHeapGet(const MaxHeap *heap, const size_t index) {
-    return heapGet((Heap *)heap, index);
-}
-
-static inline void *minHeapGetMin(const MinHeap *min_heap) {
-    if (minHeapIsEmpty(min_heap)) return NULL;
-    return minHeapGet(min_heap, 0);
-}
-
-static inline void *maxHeapGetMax(const MaxHeap *max_heap) {
-    if (maxHeapIsEmpty(max_heap)) return NULL;
-    return maxHeapGet(max_heap, 0);
-}
-
-/// Change
-static inline void minHeapSet(MinHeap *heap, const size_t index, void *data) {
-    heapSet((Heap *)heap, index, data);
-}
-
-static inline void maxHeapSet(MaxHeap *heap, const size_t index, void *data) {
-    heapSet((Heap *)heap, index, data);
-}
-
-void minHeapify(MinHeap *min_heap, key_val_func key);
-void maxHeapify(MaxHeap *max_heap, key_val_func key);
-
-void minHeapifyShiftUp(MinHeap *min_heap, size_t index, key_val_func key);
-void maxHeapifyShiftUp(MaxHeap *max_heap, size_t index, key_val_func key);
-
-void minHeapifyShiftDown(MinHeap *min_heap, size_t index, key_val_func key);
-void maxHeapifyShiftDown(MaxHeap *max_heap, size_t index, key_val_func key);
-
-MinHeap *minHeapFromArray(Array *array, key_val_func key);
-MaxHeap *maxHeapFromArray(Array *array, key_val_func key);
+void minHeapShiftDown(MinHeap *min_heap, size_t index, key_val_func key);
+void maxHeapShiftDown(MaxHeap *max_heap, size_t index, key_val_func key);
 
 // Returns new shorter heap and frees the old one
-MinHeap *minHeapPopMin(const MinHeap *min_heap, key_val_func key);
-MaxHeap *maxHeapPopMax(const MaxHeap *max_heap, key_val_func key);
+void *minHeapPopMin(MinHeap *min_heap, key_val_func key);
+void *maxHeapPopMax(MaxHeap *max_heap, key_val_func key);
 
-// Returns new longer heap and frees the old one
-MinHeap *minHeapPushMin(const MinHeap *min_heap, void *elem, key_val_func key);
-MaxHeap *maxHeapPushMax(const MaxHeap *max_heap, void *elem, key_val_func key);
+bool minHeapAdd(MinHeap *min_heap, void *elem, key_val_func key);
+bool maxHeapAdd(MaxHeap *max_heap, void *elem, key_val_func key);

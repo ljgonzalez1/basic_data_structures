@@ -116,4 +116,5 @@ Array *arraySelectionSorted(const Array *array, const key_val_func key) {
 
     arraySelectionSort(sorted_array, key);
 
-    return sorted_
+    return sorted_array;
+}

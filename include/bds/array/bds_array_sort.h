@@ -5,7 +5,7 @@
 /// Sorting (SAME sorted array)
 
 void arrayOddEvenSort(Array *array, key_val_func key);
-void arrayCombSorted(Array *array, key_val_func key);
+void arrayCombSort(Array *array, key_val_func key);
 
 //////////////////////////// AVG: O(n²) ////////////////////////////
 void arrayBubbleSort(Array *array, key_val_func key);
@@ -28,6 +28,7 @@ void arrayQuickSort(Array *array, key_val_func key);
 /// Sorting (returns NEW sorted array)
 
 Array *arrayOddEvenSorted(const Array *array, key_val_func key);
+Array *arrayCombSorted(const Array *array, key_val_func key);
 
 // AVG: O(n²)
 Array *arrayBubbleSorted (const Array *array, key_val_func key);
