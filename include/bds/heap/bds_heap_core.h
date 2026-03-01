@@ -78,14 +78,14 @@ void *maxHeapGetMax(const MaxHeap *max_heap);
 
 /// Change
 
-void minHeapify(MinHeap *min_heap, key_val_func key);
-void maxHeapify(MaxHeap *max_heap, key_val_func key);
+void minHeapHeapify(MinHeap *min_heap, key_val_func key);
+void maxHeapHeapify(MaxHeap *max_heap, key_val_func key);
 
-void minHeapifyShiftUp(MinHeap *min_heap, size_t index, key_val_func key);
-void maxHeapifyShiftUp(MaxHeap *max_heap, size_t index, key_val_func key);
+void minHeapShiftUp(MinHeap *min_heap, size_t index, key_val_func key);
+void maxHeapShiftUp(MaxHeap *max_heap, size_t index, key_val_func key);
 
-void minHeapifyShiftDown(MinHeap *min_heap, size_t index, key_val_func key);
-void maxHeapifyShiftDown(MaxHeap *max_heap, size_t index, key_val_func key);
+void minHeapShiftDown(MinHeap *min_heap, size_t index, key_val_func key);
+void maxHeapShiftDown(MaxHeap *max_heap, size_t index, key_val_func key);
 
 // Returns new shorter heap and frees the old one
 void *minHeapPopMin(MinHeap *min_heap, key_val_func key);

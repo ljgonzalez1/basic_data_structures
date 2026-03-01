@@ -1,114 +1,250 @@
 #include "../../include/bds/heap/bds_heap_core.h"
+#include "../../include/bds/heap/bds_heap_utils.h"
 
 #include <stdlib.h>
 
+void minHeapShiftDown(MinHeap *min_heap, size_t index, const key_val_func key) {
+    if (!minHeapExists(min_heap) || !min_heap->data || !key) return;
 
-static void _heapShiftUp(Heap *heap, const size_t idx, const key_val_func key) {
-    // TODO:
+    const size_t heap_length = minHeapLength(min_heap);
+
+    if (index >= min_heap->length) return;
+
+    while (true) {
+        const size_t left = heapLeftChildIdx(index);
+        if (left >= heap_length) return; // no children => done
+
+        const size_t right = heapRightChildIdx(index);
+
+        // pick the child with the smaller key
+        size_t smallest = left;
+        if (right < heap_length && heapKeyCompare(
+                min_heap->data[right],
+                min_heap->data[left],
+                key
+            ) < 0) {
+
+            smallest = right;
+        }
+
+        // if parent <= smallest child, heap property holds
+        if (heapKeyCompare(
+                min_heap->data[index],
+                min_heap->data[smallest], key)
+                <= 0) return;
+
+        heapSwap((Heap *)min_heap, index, smallest);
+        index = smallest;
+    }
 }
 
-static void _heapShiftDown(Heap *heap, const size_t idx, const key_val_func key) {
+void maxHeapShiftDown(MaxHeap *max_heap, size_t index, const key_val_func key) {
+    if (!maxHeapExists(max_heap) || !max_heap->data || !key) return;
 
+    const size_t heap_length = maxHeapLength(max_heap);
+
+    if (index >= max_heap->length) return;
+
+    while (true) {
+        const size_t left = heapLeftChildIdx(index);
+        if (left >= heap_length) return; // no children => done
+
+        const size_t right = heapRightChildIdx(index);
+
+        // pick the child with the larger key
+        size_t largest = left;
+        if (right < heap_length &&
+            heapKeyCompare(
+                max_heap->data[right],
+                max_heap->data[left],
+                key) > 0
+                ) {
+            largest = right;
+            }
+
+        // if parent >= largest child, heap property holds
+        if (heapKeyCompare(
+                max_heap->data[index],
+                max_heap->data[largest],
+                key) >= 0) return;
+
+        heapSwap((Heap *)max_heap, index, largest);
+        index = largest;
+    }
 }
 
-/// ///
+void minHeapShiftUp(MinHeap *min_heap, size_t index, const key_val_func key) {
+    if (!minHeapExists(min_heap) || !min_heap->data || !key) return;
 
-// Heapify bottom-up (Floyd)
-static void _heapHeapify(Heap *heap, const key_val_func key) {
-    if (!_heapExists(heap) || _heapIsEmpty(heap)) return;
+    const size_t min_heap_length = min_heap->length;
 
-    for (size_t idx = _heapLength(heap) >> 1; idx > 0; idx--) {
-        _heapShiftDown(heap, idx - 1, key);
+    if (index >= min_heap_length) return;
+
+    while (index > 0) {
+        const size_t parent = heapParentIdx(index);
+
+        // if parent <= child, heap property holds
+        if (heapKeyCompare(
+                min_heap->data[parent],
+                min_heap->data[index],
+                key) <= 0) return;
+
+        heapSwap((Heap *)min_heap, parent, index);
+        index = parent;
+    }
+}
+
+void maxHeapShiftUp(MaxHeap *max_heap, size_t index, const key_val_func key) {
+    if (!maxHeapExists(max_heap) || !max_heap->data || !key) return;
+
+    const size_t max_heap_length = max_heap->length;
+
+    if (index >= max_heap_length) return;
+
+    while (index > 0) {
+        const size_t parent = heapParentIdx(index);
+
+        // if parent >= child, heap property holds
+        if (heapKeyCompare(
+                max_heap->data[parent],
+                max_heap->data[index],
+                key) >= 0) return;
+
+        heapSwap((Heap *)max_heap, parent, index);
+        index = parent;
     }
 }
 
 void minHeapHeapify(MinHeap *min_heap, const key_val_func key) {
-    _heapHeapify((Heap *)min_heap, key);
+    if (!minHeapExists(min_heap) || minHeapIsEmpty(min_heap)) return;
+
+    for (size_t idx = minHeapLength(min_heap) >> 1; idx > 0; idx--) {
+        minHeapShiftDown(min_heap, idx - 1, key);
+    }
 }
 
 void maxHeapHeapify(MaxHeap *max_heap, const key_val_func key) {
-    _heapHeapify((Heap *)max_heap, key);
+    if (!maxHeapExists(max_heap) || maxHeapIsEmpty(max_heap)) return;
+
+    for (size_t idx = maxHeapLength(max_heap) >> 1; idx > 0; idx--) {
+        maxHeapShiftDown(max_heap, idx - 1, key);
+    }
 }
 
-/// ///
-
-static Heap *_heapTailToHead(Heap *heap) {
-    if (!_heapExists(heap)) return NULL;
-    if (_heapIsEmpty(heap)) return heap;
+static MinHeap *minHeapTailToHead(MinHeap *min_Heap) {
+    if (!minHeapExists(min_Heap)) return NULL;
+    if (minHeapIsEmpty(min_Heap)) return min_Heap;
 
     // Empty heap has no self->data.
-    if (_heapLength(heap) == 1) {
-        free(heap->data);
-        heap->data = NULL;
-        heap->length = 0;
-        return heap;
+    if (minHeapLength(min_Heap) == 1) {
+        free(min_Heap->data);
+        min_Heap->data = NULL;
+        min_Heap->length = 0;
+        return min_Heap;
     }
 
-    void *tail = heap->data[heap->length - 1];
-    heap->data[0] = tail;
+    void *tail = min_Heap->data[min_Heap->length - 1];
+    min_Heap->data[0] = tail;
 
-    heap->length--;
+    min_Heap->length--;
     // NOTE: NOTE: UNNECESSARY STEP, BUT KEEPS THE MEMORY CLEAN
-    heap->data[heap->length] = NULL;
+    min_Heap->data[min_Heap->length] = NULL;
 
-    void **reallocated_heap_data_array = realloc(heap->data, heap->length * sizeof *heap->data);
+    void **reallocated_heap_data_array = realloc(min_Heap->data, min_Heap->length * sizeof *min_Heap->data);
     // NOTE: IT SHOULD BE FINE ANYWAY. IT'LL JUST GROW A BIT
-    if (reallocated_heap_data_array) heap->data = reallocated_heap_data_array;
+    if (reallocated_heap_data_array) min_Heap->data = reallocated_heap_data_array;
 
-    return heap;
+    return min_Heap;
 }
 
+static MaxHeap *maxHeapTailToHead(MaxHeap *max_heap) {
+    if (!maxHeapExists(max_heap)) return NULL;
+    if (maxHeapIsEmpty(max_heap)) return max_heap;
 
-static void *_heapPopExtremum(Heap *heap, const key_val_func key) {
-    // Takes the extremum (min or max) from the head of the heap,
-    // then moves the tail to the head and shifts down to restore the heap property.
-    if (!_heapExists(heap) || _heapIsEmpty(heap)) return NULL;
-
-    void *extremum = heap->data[0];
-
-    Heap *smaller_heap = _heapTailToHead(heap);
-
-    if (_heapExists(smaller_heap) && _heapLength(smaller_heap) > 0) {
-        _heapShiftDown(smaller_heap, 0, key);
+    // Empty heap has no self->data.
+    if (maxHeapLength(max_heap) == 1) {
+        free(max_heap->data);
+        max_heap->data = NULL;
+        max_heap->length = 0;
+        return max_heap;
     }
 
-    return extremum;
+    void *tail = max_heap->data[max_heap->length - 1];
+    max_heap->data[0] = tail;
+
+    max_heap->length--;
+    // NOTE: NOTE: UNNECESSARY STEP, BUT KEEPS THE MEMORY CLEAN
+    max_heap->data[max_heap->length] = NULL;
+
+    void **reallocated_heap_data_array = realloc(max_heap->data, max_heap->length * sizeof *max_heap->data);
+    // NOTE: IT SHOULD BE FINE ANYWAY. IT'LL JUST GROW A BIT
+    if (reallocated_heap_data_array) max_heap->data = reallocated_heap_data_array;
+
+    return max_heap;
 }
 
 void *minHeapPopMin(MinHeap *min_heap, const key_val_func key) {
-    return _heapPopExtremum((Heap *)min_heap, key);
+    // Takes the extremum (min) from the head of the heap,
+    // then moves the tail to the head and shifts down to restore the heap property.
+    if (!minHeapExists(min_heap) || minHeapIsEmpty(min_heap)) return NULL;
+
+    void *minimum = min_heap->data[0];
+
+    MinHeap *smaller_heap = minHeapTailToHead(min_heap);
+
+    if (minHeapExists(smaller_heap) && minHeapLength(smaller_heap) > 0) {
+        minHeapShiftDown(smaller_heap, 0, key);
+    }
+
+    return minimum;
 }
 
 void *maxHeapPopMax(MaxHeap *max_heap, const key_val_func key) {
-    return _heapPopExtremum((Heap *)max_heap, key);
+    // Takes the extremum (max) from the head of the heap,
+    // then moves the tail to the head and shifts down to restore the heap property.
+    if (!maxHeapExists(max_heap) || maxHeapIsEmpty(max_heap)) return NULL;
+
+    void *maximum = max_heap->data[0];
+
+    MaxHeap *smaller_heap = maxHeapTailToHead(max_heap);
+
+    if (_heapExists(smaller_heap) && maxHeapLength(smaller_heap) > 0) {
+        maxHeapShiftDown(smaller_heap, 0, key);
+    }
+
+    return maximum;
 }
 
-/// ///
+bool minHeapAdd(MinHeap *min_heap, void *data, const key_val_func key) {
+    if (!minHeapExists(min_heap)) return false;
 
-static bool _heapAdd(Heap *heap, void *data, const key_val_func key) {
-    if (!_heapExists(heap)) return false;
-
-    const size_t old_len = heap->length;
+    const size_t old_len = minHeapLength(min_heap);
     const size_t new_len = old_len + 1;
 
-    void **new_data = realloc(heap->data, new_len * sizeof *heap->data);
+    void **new_data = realloc(min_heap->data, new_len * sizeof *min_heap->data);
     if (!new_data) return false;
 
-    heap->data = new_data;
-    heap->data[old_len] = data;
-    heap->length = new_len;
+    min_heap->data = new_data;
+    min_heap->data[old_len] = data;
+    min_heap->length = new_len;
 
-    _heapShiftUp(heap, old_len, key);
+    minHeapShiftUp(min_heap, old_len, key);
     return true;
 }
 
-bool minHeapAdd(MinHeap *min_heap, void *elem, const key_val_func key) {
-    return _heapAdd((Heap *)min_heap, elem, key);
+bool maxHeapAdd(MaxHeap *max_heap, void *data, const key_val_func key) {
+    if (!maxHeapExists(max_heap)) return false;
+
+    const size_t old_len = maxHeapLength(max_heap);
+    const size_t new_len = old_len + 1;
+
+    void **new_data = realloc(max_heap->data, new_len * sizeof *max_heap->data);
+    if (!new_data) return false;
+
+    max_heap->data = new_data;
+    max_heap->data[old_len] = data;
+    max_heap->length = new_len;
+
+    maxHeapShiftUp(max_heap, old_len, key);
+    return true;
 }
-
-
-bool maxHeapAdd(MaxHeap *max_heap, void *elem, const key_val_func key) {
-    return _heapAdd((Heap *)max_heap, elem, key);
-}
-
-
