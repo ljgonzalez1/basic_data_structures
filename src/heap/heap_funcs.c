@@ -13,8 +13,13 @@ static void _heapShiftDown(Heap *heap, const size_t idx, const key_val_func key)
 
 /// ///
 
+// Heapify bottom-up (Floyd)
 static void _heapHeapify(Heap *heap, const key_val_func key) {
-    // TODO:
+    if (!_heapExists(heap) || _heapIsEmpty(heap)) return;
+
+    for (size_t idx = _heapLength(heap) >> 1; idx > 0; idx--) {
+        _heapShiftDown(heap, idx - 1, key);
+    }
 }
 
 void minHeapHeapify(MinHeap *min_heap, const key_val_func key) {
