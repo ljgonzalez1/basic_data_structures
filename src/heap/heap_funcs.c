@@ -43,11 +43,11 @@ static Heap *_heapTailToHead(Heap *heap) {
     heap->data[0] = tail;
 
     heap->length--;
-    // TODO: NOTE: UNNECESSARY STEP, BUT KEEPS THE MEMORY CLEAN
+    // NOTE: NOTE: UNNECESSARY STEP, BUT KEEPS THE MEMORY CLEAN
     heap->data[heap->length] = NULL;
 
     void **reallocated_heap_data_array = realloc(heap->data, heap->length * sizeof *heap->data);
-    // TODO: IT SHOULD BE FINE ANYWAYS. IT'LL JUST GROW A BIT
+    // NOTE: IT SHOULD BE FINE ANYWAYS. IT'LL JUST GROW A BIT
     if (reallocated_heap_data_array) heap->data = reallocated_heap_data_array;
 
     return heap;
