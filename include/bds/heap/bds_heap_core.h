@@ -94,6 +94,5 @@ void maxHeapifyShiftDown(MaxHeap *max_heap, size_t index, key_val_func key);
 MinHeap *minHeapPopMin(const MinHeap *min_heap, key_val_func key);
 MaxHeap *maxHeapPopMax(const MaxHeap *max_heap, key_val_func key);
 
-// Returns new longer heap and frees the old one
-MinHeap *minHeapPushMin(const MinHeap *min_heap, void *elem, key_val_func key);
-MaxHeap *maxHeapPushMax(const MaxHeap *max_heap, void *elem, key_val_func key);
+bool minHeapAdd(const MinHeap *min_heap, void *elem, key_val_func key);
+bool maxHeapAdd(const MaxHeap *max_heap, void *elem, key_val_func key);
